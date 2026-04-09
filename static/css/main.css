@@ -1,0 +1,52 @@
+/* --- 全局背景控制 --- */
+body {
+    background-color: #0d0d0d !important; /* 背景：極暗黑 */
+    color: #FFFFFF !important;           /* 全局文字顏色：純白 */
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;              /* 垂直排列內容 */
+    justify-content: center;             /* 水平居中 */
+    align-items: center;                 /* 垂直居中 */
+    overflow: hidden;
+}
+
+/* --- 鳥居顏色與亮度控制 --- */
+#torii rect {
+    fill: #FFFFFF !important;            /* 這裡定義鳥居木架的顏色：純白 */
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); /* 增加微弱光暈 */
+}
+
+/* --- 神聖光點 (呼吸效果) --- */
+#divine-light {
+    fill: #FFFFFF !important;            /* 光點顏色：純白 */
+    filter: drop-shadow(0 0 15px #FFFFFF); /* 強烈發光效果 */
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* --- 文字位置與顏色定義 --- */
+.fade-in {
+    color: #FFFFFF !important;           /* 文字顏色：純白 */
+    font-size: 2.5rem;                   /* 文字大小 */
+    font-weight: bold;
+    margin-top: 30px;                    /* 距離上方鳥居的距離 (控制位置) */
+    text-shadow: 0 0 20px rgba(255,255,255,0.8); /* 文字發光 */
+    animation: fadeIn 3s ease-in forwards;
+}
+
+.whisper {
+    color: #AAAAAA !important;           /* 提示文字顏色：淺灰色 */
+    margin-top: 15px;                    /* 距離上方主標題的距離 (控制位置) */
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
