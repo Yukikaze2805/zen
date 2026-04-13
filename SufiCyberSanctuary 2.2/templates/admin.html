@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>後台管理</title>
+</head>
+<body style="background:#111; color:#fff; padding:30px;">
+<h2>慧忍神宮｜後台管理</h2>
+<a href="/admin/logout" style="color:#ff6666;">登出</a>
+<hr>
+
+<!-- 订阅者区域 -->
+<h3 style="margin-top: 30px; color: #aaa; letter-spacing: 5px;">訂閱者列表 ({{ subscribers|length }})</h3>
+{% for s in subscribers %}
+<div style="border-bottom:1px solid #333; padding:10px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 16px; color: #ddd;">📧 {{ s.email }}</div>
+        <div style="font-size: 12px; color: #666;">訂閱時間: {{ s.subscribe_time }}</div>
+    </div>
+</div>
+{% else %}
+<p style="color: #666;">暫無訂閱者</p>
+{% endfor %}
+
+<hr style="margin-top: 40px;">
+
+<!-- 留言区域 -->
+<h3 style="margin-top: 30px; color: #aaa; letter-spacing: 5px;">信眾留言 ({{ messages|length }})</h3>
+{% for m in messages %}
+<div style="border-bottom:1px solid #333; padding:10px 0;">
+    <div>#{{ m.id }}｜{{ m.name }}｜{{ m.time }}</div>
+    <div style="margin-top:5px; font-size:18px;">{{ m.content }}</div>
+</div>
+{% else %}
+<p>暫無留言</p>
+{% endfor %}
+</body>
+</html>
