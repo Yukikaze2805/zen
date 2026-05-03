@@ -26,20 +26,34 @@ os.environ['all_proxy'] = ''
 # 1. 智谱 AI 客户端初始化
 # ==========================================
 def initialize_zen_master():
-    # ⚠️ 请替换为你自己的智谱 API Key
-    api_key = "1265416a3d704170a40c2d46a6f58d34.PgFhYul1vAochY6L"
-    if not api_key or "这里" in api_key:
-        print("❌ 未配置真实 API Key，忏悔室将返回占位回复")
-        return None
-    try:
-        client = ZhipuAI(api_key=api_key)
-        print(f"✅ 智谱 AI 初始化成功")
-        return client
-    except Exception as e:
-        print(f"❌ 智谱 AI 初始化失败: {e}")
+    """
+    从环境变量中读取智谱 AI 密钥。
+    本地测试时：请确保环境变量中已设置 ZHIPU_API_KEY，或者临时手动填入。
+    Vercel 部署时：请在 Vercel 后台设置 Environment Variables。
+    """
+    # 核心逻辑：从系统环境变量获取密钥，变量名为 ZHIPU_API_KEY
+    api_key = os.environ.get("ZHIPU_API_KEY")
+    
+    # 容错处理：如果环境变量不存在（比如本地没配），你可以保留一个手动填写的备份，但不要上传到 GitHub
+    if not api_key:
+        # 这里可以填入你的真实密钥用于本地测试，但部署到云端前请确保 Vercel 已配置同名变量
+        api_key = "这里填入你的真实智谱API密钥" 
+
+    if api_key and api_key != "这里填入你的真实智谱API密钥":
+        try:
+            client = ZhipuAI(api_key=api_key)
+            # 打印前5位，方便在 Vercel 日志中确认密钥是否加载成功
+            print(f"✅ [智谱 AI 初始化成功] 密钥指纹: {api_key[:5]}...")
+            return client
+        except Exception as e:
+            print(f"❌ [初始化失败]: {str(e)}")
+            return None
+    else:
+        print("❌ [系统讯息]：未检测到有效的 ZHIPU_API_KEY。")
         return None
 
-zhipu_client = initialize_zen_master() if ZhipuAI else None
+# 初始化全局客户端
+client = initialize_zen_master()
 
 # ==========================================
 # 2. 全局数据存储 (内存数据库)
