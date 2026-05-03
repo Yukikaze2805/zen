@@ -1,66 +1,26 @@
 /* --- 全局背景控制 --- */
 body {
-    background-color: #0d0d0d !important;
-    color: #FFFFFF !important;
+    background-color: #0d0d0d !important; /* 背景：極暗黑 */
+    color: #FFFFFF !important;           /* 全局文字顏色：純白 */
     margin: 0;
     height: 100vh;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;              /* 垂直排列內容 */
+    justify-content: center;             /* 水平居中 */
+    align-items: center;                 /* 垂直居中 */
     overflow: hidden;
-    position: relative;
-}
-
-/* --- 背景呼吸光晕效果 --- */
-body::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80vw;
-    height: 80vh;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-    animation: backgroundPulse 4s ease-in-out infinite;
-    pointer-events: none;
-    z-index: -1;
-}
-
-@keyframes backgroundPulse {
-    0%, 100% {
-        opacity: 0.3;
-        transform: translate(-50%, -50%) scale(1);
-    }
-    50% {
-        opacity: 0.6;
-        transform: translate(-50%, -50%) scale(1.1);
-    }
 }
 
 /* --- 鳥居顏色與亮度控制 --- */
 #torii rect {
-    fill: #FFFFFF !important;
-    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-    animation: toriiGlow 3s ease-in-out infinite;
-}
-
-/* --- 鸟居呼吸灯效果 --- */
-@keyframes toriiGlow {
-    0%, 100% {
-        filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-        opacity: 0.9;
-    }
-    50% {
-        filter: drop-shadow(0 0 15px rgba(255,255,255,0.9));
-        opacity: 1;
-    }
+    fill: #FFFFFF !important;            /* 這裡定義鳥居木架的顏色：純白 */
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.5)); /* 增加微弱光暈 */
 }
 
 /* --- 神聖光點 (呼吸效果) --- */
 #divine-light {
-    fill: #FFFFFF !important;
-    filter: drop-shadow(0 0 15px #FFFFFF);
+    fill: #FFFFFF !important;            /* 光點顏色：純白 */
+    filter: drop-shadow(0 0 15px #FFFFFF); /* 強烈發光效果 */
     animation: pulse 2s infinite;
 }
 
@@ -71,45 +31,19 @@ body::before {
 
 /* --- 文字位置與顏色定義 --- */
 .fade-in {
-    color: #FFFFFF !important;
-    font-size: 2.5rem;
+    color: #FFFFFF !important;           /* 文字顏色：純白 */
+    font-size: 2.5rem;                   /* 文字大小 */
     font-weight: bold;
-    margin-top: 30px;
-    text-shadow: 0 0 20px rgba(255,255,255,0.8);
-    animation: fadeIn 3s ease-in forwards, textBreath 4s ease-in-out infinite 3s;
-}
-
-/* --- 文字呼吸发光效果 --- */
-@keyframes textBreath {
-    0%, 100% {
-        text-shadow: 0 0 20px rgba(255,255,255,0.8),
-                     0 0 30px rgba(255,255,255,0.4);
-    }
-    50% {
-        text-shadow: 0 0 30px rgba(255,255,255,1),
-                     0 0 50px rgba(255,255,255,0.6),
-                     0 0 70px rgba(255,255,255,0.3);
-    }
+    margin-top: 30px;                    /* 距離上方鳥居的距離 (控制位置) */
+    text-shadow: 0 0 20px rgba(255,255,255,0.8); /* 文字發光 */
+    animation: fadeIn 3s ease-in forwards;
 }
 
 .whisper {
-    color: #AAAAAA !important;
-    margin-top: 15px;
+    color: #AAAAAA !important;           /* 提示文字顏色：淺灰色 */
+    margin-top: 15px;                    /* 距離上方主標題的距離 (控制位置) */
     font-size: 0.9rem;
     letter-spacing: 2px;
-    animation: whisperBreath 3s ease-in-out infinite;
-}
-
-/* --- 提示文字呼吸效果 --- */
-@keyframes whisperBreath {
-    0%, 100% {
-        opacity: 0.6;
-        text-shadow: 0 0 5px rgba(170,170,170,0.3);
-    }
-    50% {
-        opacity: 1;
-        text-shadow: 0 0 15px rgba(170,170,170,0.6);
-    }
 }
 
 @keyframes fadeIn {

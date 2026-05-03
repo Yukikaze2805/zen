@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>每日簽到 | Daily Check-in</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .checkin-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .checkin-info {
+            display: flex;
+            gap: 50px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 20px 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.03);
+            min-width: 150px;
+        }
+
+        .info-label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .info-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        .checkin-button {
+            background: transparent;
+            border: 2px solid #FFFFFF;
+            color: #FFFFFF;
+            font-size: 1.5rem;
+            padding: 15px 50px;
+            cursor: pointer;
+            letter-spacing: 10px;
+            transition: all 0.3s ease;
+            animation: buttonBreath 3s ease-in-out infinite;
+        }
+
+        .checkin-button:hover:not(:disabled) {
+            background: #FFFFFF;
+            color: #000000;
+            box-shadow: 0 0 30px rgba(255,255,255,0.6);
+        }
+
+        .checkin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        @keyframes buttonBreath {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255,255,255,0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(255,255,255,0.6);
+            }
+        }
+
+        .reward-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            border: 2px solid #FFFFFF;
+            padding: 40px 60px;
+            text-align: center;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .reward-notification.show {
+            display: block;
+        }
+
+        .reward-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+        }
+
+        .reward-close {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 8px 30px;
+            cursor: pointer;
+            letter-spacing: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .reward-close:hover {
+            background: #FFFFFF;
+            color: #000000;
+        }
+
+        .nav-links {
+            margin-top: 60px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #AAAAAA;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid #444;
+            transition: all 0.3s ease;
+            letter-spacing: 3px;
+        }
+
+        .nav-link:hover {
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        .page-title {
+            letter-spacing: 10px;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            animation: shrineTitleBreath 4s ease-in-out infinite;
+        }
+
+        .page-subtitle {
+            color: #666;
+            margin-bottom: 50px;
+            letter-spacing: 5px;
+        }
+
+        @keyframes shrineTitleBreath {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255,255,255,0.9),
+                             0 0 40px rgba(255,255,255,0.5);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkin-container">
+        <h2 class="page-title">每日簽到</h2>
+        <p class="page-subtitle">DAILY CHECK-IN</p>
+
+        <div class="checkin-info">
+            <div class="info-item">
+                <div class="info-label">連續簽到天數</div>
+                <div class="info-value">{{ continuous_days }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">累計簽到天數</div>
+                <div class="info-value">{{ total_days }}</div>
+            </div>
+        </div>
+
+        <button id="checkinBtn" class="checkin-button" {% if today_completed %}disabled{% endif %}>
+            {% if today_completed %}今日已簽到{% else %}今日簽到{% endif %}
+        </button>
+
+        <div class="nav-links">
+            <a href="/daily-prayer" class="nav-link">每日祈願</a>
+            <a href="/meditation" class="nav-link">靜心儀式</a>
+            <a href="/profile" class="nav-link">用戶中心</a>
+            <a href="/shrine" class="nav-link">返回神宮</a>
+        </div>
+    </div>
+
+    <!-- 奖励弹窗 -->
+    <div id="rewardNotification" class="reward-notification">
+        <div class="reward-title">恭喜獲得連續簽到獎勵</div>
+        <button class="reward-close" onclick="closeReward()">確 定</button>
+    </div>
+
+    <script>
+        document.getElementById('checkinBtn').addEventListener('click', async function() {
+            const btn = this;
+
+            if (btn.disabled) {
+                alert('今日已自動簽到');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = '處 理 中...';
+
+            try {
+                const res = await fetch('/api/checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.error || '簽到失敗，請稍後再試');
+                    btn.disabled = false;
+                    btn.innerText = '今日簽到';
+                    return;
+                }
+
+                // 更新显示
+                document.querySelector('.info-value').innerText = data.continuous_days;
+                document.querySelectorAll('.info-value')[1].innerText = data.total_days;
+
+                btn.innerText = '今日已簽到';
+                btn.disabled = true;
+
+                // 如果获得奖励，显示弹窗
+                if (data.got_reward) {
+                    document.getElementById('rewardNotification').classList.add('show');
+                } else {
+                    alert('今日已自動簽到');
+                }
+
+            } catch (error) {
+                console.error('簽到錯誤:', error);
+                alert('網路異常，請稍後再試');
+                btn.disabled = false;
+                btn.innerText = '今日簽到';
+            }
+        });
+
+        function closeReward() {
+            document.getElementById('rewardNotification').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

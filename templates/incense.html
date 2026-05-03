@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數字香火 - 慧忍神宮</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            margin: 0 auto;
+            padding-top: 5vh;
+        }
+        .title {
+            font-size: 2.2rem;
+            letter-spacing: 0.3rem;
+            margin-bottom: 1rem;
+        }
+        .subtitle {
+            color: #999;
+            margin-bottom: 4rem;
+            letter-spacing: 0.1rem;
+        }
+        .menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .menu-btn {
+            padding: 1.2rem 0;
+            font-size: 1.1rem;
+            letter-spacing: 0.2rem;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .menu-btn:hover {
+            background: #fff;
+            color: #000;
+        }
+        .back {
+            margin-top: 4rem;
+            color: #777;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">數 字 香 火</h1>
+        <p class="subtitle">誠心供養，功德無量</p>
+
+        <div class="menu-grid">
+            <button class="menu-btn" onclick="location.href='/donate/light'">數 字 供 燈</button>
+            <button class="menu-btn" onclick="location.href='/donate/plate'">數 字 供 牌</button>
+            <button class="menu-btn" onclick="location.href='/donate/incense'">數 字 上 香</button>
+            <button class="menu-btn" onclick="location.href='/donate/custom'">捐 功 德（自定義）</button>
+        </div>
+
+        <a href="/shrine" class="back">← 返回神宮</a>
+    </div>
+</body>
+</html>

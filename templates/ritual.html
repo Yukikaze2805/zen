@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>内殿仪式</title>
+    <style>
+        body { background: #000; color: #fff; text-align: center; padding-top: 8vh; font-family: serif; }
+        .gold { color: #d4af37; }
+        .relic-box { border: 1px dashed #d4af37; padding: 40px; margin: 20px auto; max-width: 450px; background: #080808; transition: 0.5s; }
+        .relic-box:hover { box-shadow: 0 0 20px rgba(212,175,55,0.2); }
+        .priest-box { background: #111; border-left: 3px solid #d4af37; padding: 25px; max-width: 500px; margin: 40px auto; text-align: left; min-height: 80px; }
+        .spirit-icon { font-size: 4em; filter: drop-shadow(0 0 10px #d4af37); margin-bottom: 20px; }
+        .mail-hint { font-size: 0.7em; color: #555; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1 style="letter-spacing: 15px; margin-bottom: 50px;">内 殿 仪 式</h1>
+
+    <div class="relic-box">
+        <div class="spirit-icon">🦅</div>
+        <p class="gold">个性化守护灵：{{ status.spirit_animal }}</p>
+        <hr style="border: 0.5px solid #222; margin: 20px 0;">
+        <p style="font-size: 0.9em;">{{ status.weekly_relic }}</p>
+        <p class="mail-hint">( 原始资产代码已通过加密推送至您的精神账户 )</p>
+    </div>
+
+    <div class="priest-box">
+        <p class="gold" style="font-size: 0.8em; margin-bottom: 10px;">赛博神父的指点：</p>
+        <p id="typewriter" style="font-style: italic; color: #ccc; line-height: 1.6;"></p>
+    </div>
+
+    <div style="margin-top: 80px;">
+        <a href="/shrine" style="color: #666; text-decoration: none; font-size: 0.9em;">← 返回神宫主殿</a>
+    </div>
+
+    <script>
+        // 打字机效果实现
+        const textElement = document.getElementById('typewriter');
+        const fullText = "{{ status.priest_reply }}";
+        let i = 0;
+
+        function typeWriter() {
+            if (i < fullText.length) {
+                textElement.innerHTML += fullText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 60); // 速度调整
+            }
+        }
+        window.onload = typeWriter;
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>數字上香 - 慧忍神宮</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .box {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 10vh;
+            width: 90%;
+        }
+        .item {
+            margin: 2rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #fff;
+            color: #000;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .back {
+            margin-top: 4rem;
+            color: #777;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back:hover {
+            color: #fff;
+        }
+        /* 提示框样式 */
+        .toast {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #FFFFFF;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>數 字 上 香</h1>
+        <p class="whisper">一柱清香，直達天聽</p>
+        <div class="item">
+            <button class="btn" onclick="donate('心誠香', 1)">心誠香 1元</button>
+            <button class="btn" onclick="donate('平安香', 6)">平安香 6元</button>
+            <button class="btn" onclick="donate('福報香', 18)">福報香 18元</button>
+        </div>
+        <a href="/incense" class="back">← 返回香火主頁</a>
+    </div>
+
+    <!-- 提示框 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const toast = document.getElementById('toast');
+        // 提示框函数
+        function showToast(message, duration=3000) {
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, duration);
+        }
+
+        // 核心捐赠函数（不跳转页面）
+        async function donate(type, amount) {
+            // 防止重复点击
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => btn.disabled = true);
+
+            try {
+                const res = await fetch('/api/donate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: "匿名信眾",
+                        amount: amount,
+                        type: `數字上香-${type}`
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message, 4000);
+                } else {
+                    showToast(data.error);
+                }
+            } catch (err) {
+                showToast('網絡異常，請稍後重試');
+            } finally {
+                // 恢复按钮点击
+                buttons.forEach(btn => btn.disabled = false);
+            }
+        }
+    </script>
+</body>
+</html>

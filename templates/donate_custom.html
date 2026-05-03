@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捐功德 - 慧忍神宮</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .box {
+            text-align: center;
+            max-width: 500px;
+            margin: 0 auto;
+            padding-top: 10vh;
+            width: 90%;
+        }
+        input {
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 1rem;
+            width: 80%;
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            outline: none;
+        }
+        .btn {
+            padding: 1rem 2rem;
+            border: 1px solid #fff;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #fff;
+            color: #000;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .back {
+            margin-top: 4rem;
+            color: #777;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .back:hover {
+            color: #fff;
+        }
+        /* 提示框样式 */
+        .toast {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #FFFFFF;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>捐 功 德</h1>
+        <p class="whisper">隨心隨力，功德無量</p>
+        <input type="number" id="amount" placeholder="最低 1 元" min="1" step="0.01">
+        <br>
+        <button class="btn" onclick="submit()">確 認 捐 贈</button>
+        <br><br>
+        <a href="/incense" class="back">← 返回香火主頁</a>
+    </div>
+
+    <!-- 提示框 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const toast = document.getElementById('toast');
+        const amountInput = document.getElementById('amount');
+        // 提示框函数
+        function showToast(message, duration=3000) {
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, duration);
+        }
+
+        // 核心捐赠函数（不跳转页面）
+        async function submit() {
+            const amount = amountInput.value.trim();
+            // 金额校验
+            if (!amount || parseFloat(amount) < 1) {
+                showToast('最低捐贈金額為 1 元');
+                return;
+            }
+
+            // 防止重复点击
+            const btn = document.querySelector('.btn');
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/donate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: "匿名信眾",
+                        amount: amount,
+                        type: "捐功德"
+                    })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message, 4000);
+                    amountInput.value = ''; // 成功后清空输入框
+                } else {
+                    showToast(data.error);
+                }
+            } catch (err) {
+                showToast('網絡異常，請稍後重試');
+            } finally {
+                // 恢复按钮点击
+                btn.disabled = false;
+            }
+        }
+
+        // 回车提交
+        amountInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') submit();
+        });
+    </script>
+</body>
+</html>

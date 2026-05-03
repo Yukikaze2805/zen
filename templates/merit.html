@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>因果功德格 | Merit Karma</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* 基础样式保持不变 */
+        .karma-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background: rgba(0, 0, 0, 0.2); padding: 20px 0; }
+        .karma-container { text-align: center; background: rgba(15, 15, 15, 0.92); padding: 40px; border-radius: 30px; border: 1px solid #333; box-shadow: 0 0 60px rgba(0, 0, 0, 1); max-width: 500px; width: 90%; backdrop-filter: blur(15px); }
+        .merit-btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 50%; width: 120px; height: 120px; font-size: 1rem; cursor: pointer; margin: 25px 0; transition: all 0.3s; }
+        .merit-btn:hover:not(:disabled) { box-shadow: 0 0 35px rgba(255, 255, 255, 0.4); transform: scale(1.05); }
+        .merit-btn:disabled { border-color: #444; color: #666; cursor: not-allowed; box-shadow: none; }
+
+        .status-box { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
+        .status-label { color: #555; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
+        .status-value { color: #fff; font-size: 1.2rem; }
+
+        .relic-section { margin-top: 30px; padding-top: 25px; border-top: 1px solid #222; }
+        .relic-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; max-height: 150px; overflow-y: auto; padding: 5px; }
+        .relic-item { background: rgba(255, 255, 255, 0.03); border: 1px solid #333; color: #ffcc00; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; }
+
+        /* 领取圣物按钮样式 */
+        .claim-btn { background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; }
+        .claim-btn:disabled { border: 1px solid #333; color: #555; cursor: not-allowed; }
+        .claim-btn.active { border: 1px solid #ffcc00; color: #ffcc00; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); animation: pulseBtn 2s infinite; }
+        @keyframes pulseBtn { 0%, 100% { box-shadow: 0 0 15px rgba(255,204,0,0.3); } 50% { box-shadow: 0 0 25px rgba(255,204,0,0.6); } }
+
+        #feedbackMsg { height: 20px; color: #00ffcc; font-size: 0.8rem; margin-bottom: 10px; transition: opacity 0.3s; opacity: 0; }
+        #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .auth-input { background: transparent; border: none; border-bottom: 1px solid #fff; color: #fff; font-size: 1.2rem; text-align: center; outline: none; padding: 10px; width: 300px; margin-bottom: 30px; }
+        .auth-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 10px 40px; cursor: pointer; letter-spacing: 5px; }
+
+        .debug-panel { margin-top: 30px; padding: 15px; border: 1px dashed #555; border-radius: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="authOverlay">
+        <h2 style="letter-spacing: 10px; margin-bottom: 50px;">绑定现世标识</h2>
+        <input type="email" id="emailInput" class="auth-input" placeholder="输入邮箱以铭刻因果">
+        <button onclick="bindIdentity()" class="auth-btn">步 入</button>
+        <p id="authMsg" style="color: #ff6666; font-size: 0.8rem; margin-top: 20px;"></p>
+    </div>
+
+    <div class="karma-wrapper" id="mainUI" style="display: none;">
+        <div class="karma-container">
+            <h1 style="font-weight: 200; letter-spacing: 10px; margin-bottom: 20px; font-size: 1.8rem;">因果格</h1>
+            <p style="color: #666; font-size: 0.7rem; margin-bottom: 30px;" id="userEmailDisplay"></p>
+
+            <div style="display: flex; justify-content: space-around; width: 100%;">
+                <div class="status-box">
+                    <div class="status-label">Realm</div>
+                    <div id="levelDisplay" class="status-value">---</div>
+                </div>
+                <div class="status-box">
+                    <div class="status-label">Merit</div>
+                    <div id="meritDisplay" class="status-value">0</div>
+                </div>
+                <div class="status-box">
+                    <div class="status-label">Kharma</div>
+                    <div id="inviteDisplay" class="status-value">0</div>
+                </div>
+            </div>
+
+            <button id="meritBtn" class="merit-btn">注入善念</button>
+            <div id="feedbackMsg"></div>
+
+            <div class="relic-section">
+                <button id="claimRelicBtn" class="claim-btn" disabled>等待有缘人...</button>
+
+                <div class="status-label">已解锁圣物 (<span id="relicCountDisplay">0</span>)</div>
+                <div id="relicList" class="relic-list"></div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 10px; border: 1px dashed #333; font-size: 0.7rem; color: #aaa;">
+                你的专属邀请链接：<br>
+                <span id="inviteLinkDisplay" style="color: #fff; user-select: all;"></span>
+            </div>
+
+            <a href="/shrine" style="margin-top: 30px; color: #444; text-decoration: none; font-size: 0.8rem; display: block;">← 返回神宫内部</a>
+            <p style="color: #333; font-size: 0.6rem; margin-top: 20px; cursor: pointer;" onclick="logout()">[ 清除本地标识 (注销) ]</p>
+
+            <div id="debugPanel" class="debug-panel">
+                <p style="color: #ff6666; font-size: 0.7rem; margin-top: 0;">[ 开发者测试模式已开启 ]</p>
+                <button onclick="triggerDebugInvite()" style="background:none; border:1px solid #666; color:#aaa; padding:5px 10px; cursor:pointer; font-size:0.7rem; border-radius:5px;">模拟1人使用我的邀请码</button>
+                <p style="color:#666; font-size:0.6rem; margin-top:5px;">(无需更换邮箱即可测试按钮高亮与领取)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 【核心配置区】
+        const CONFIG = {
+            TEST_MODE: true // 设为 true 显示下方的模拟按钮，设为 false 隐藏
+        };
+        // ==========================================
+
+        let currentUserEmail = localStorage.getItem('cyberKarmaEmail');
+
+        window.onload = () => {
+            if (CONFIG.TEST_MODE) document.getElementById('debugPanel').style.display = 'block';
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) localStorage.setItem('pendingRef', refCode);
+
+            if (currentUserEmail) {
+                document.getElementById('authOverlay').style.display = 'none';
+                document.getElementById('mainUI').style.display = 'flex';
+                syncData();
+            }
+        };
+
+        async function bindIdentity() {
+            const email = document.getElementById('emailInput').value.trim();
+            if (!email || !email.includes('@')) { document.getElementById('authMsg').innerText = "邮箱格式不正确"; return; }
+            const refCode = localStorage.getItem('pendingRef');
+            document.getElementById('authMsg').innerText = "联结中...";
+
+            try {
+                const res = await fetch('/api/merit/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, ref_code: refCode })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('cyberKarmaEmail', email);
+                    localStorage.removeItem('pendingRef');
+                    currentUserEmail = email;
+                    document.getElementById('authOverlay').style.display = 'none';
+                    document.getElementById('mainUI').style.display = 'flex';
+                    renderData(data);
+                }
+            } catch (e) { document.getElementById('authMsg').innerText = "网络异常"; }
+        }
+
+        async function syncData() {
+            const res = await fetch('/api/merit/sync', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
+            });
+            if (res.ok) renderData(await res.json()); else logout();
+        }
+
+        // --- 注入善念 (限制每日点击) ---
+        document.getElementById('meritBtn').onclick = async () => {
+            const res = await fetch('/api/merit/add', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
+            });
+            const result = await res.json();
+            showFeedback(result.message || result.error, res.ok ? "#00ffcc" : "#ffcc00");
+            if (result.data) renderData(result.data);
+        };
+
+        // --- 领取圣物 (判断 pending_invites) ---
+        document.getElementById('claimRelicBtn').onclick = async () => {
+            const res = await fetch('/api/merit/claim_relic', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
+            });
+            const result = await res.json();
+            if (res.ok) {
+                showFeedback(result.message, "#ffcc00");
+                renderData(result.data);
+            }
+        };
+
+        // --- 调试：模拟增加机缘 ---
+        async function triggerDebugInvite() {
+            const res = await fetch('/api/merit/debug_invite', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
+            });
+            if (res.ok) renderData((await res.json()).data);
+        }
+
+        // --- 渲染界面 ---
+        function renderData(data) {
+            document.getElementById('userEmailDisplay').innerText = `已绑定: ${currentUserEmail}`;
+            document.getElementById('meritDisplay').innerText = data.total;
+            document.getElementById('levelDisplay').innerText = data.level;
+            document.getElementById('inviteDisplay').innerText = data.invite_count;
+            document.getElementById('relicCountDisplay').innerText = data.relics.length;
+            document.getElementById('inviteLinkDisplay').innerText = `${window.location.origin}/merit?ref=${data.invite_code}`;
+
+            // 功德按钮防刷判定
+            const today = new Date().toISOString().split('T')[0];
+            const meritBtn = document.getElementById('meritBtn');
+            if (!CONFIG.TEST_MODE && data.last_date === today) {
+                meritBtn.disabled = true; meritBtn.innerText = "今日圆满";
+            } else {
+                meritBtn.disabled = false; meritBtn.innerText = "注入善念";
+            }
+
+            // 领取圣物按钮高亮判定
+            const claimBtn = document.getElementById('claimRelicBtn');
+            if (data.pending_invites > 0) {
+                claimBtn.disabled = false;
+                claimBtn.className = "claim-btn active";
+                claimBtn.innerText = `机缘已至！点击领取圣物 (${data.pending_invites} 待领)`;
+            } else {
+                claimBtn.disabled = true;
+                claimBtn.className = "claim-btn";
+                claimBtn.innerText = "等待有缘人...";
+            }
+
+            // 圣物列表
+            const list = document.getElementById('relicList');
+            list.innerHTML = data.relics.length === 0 ? '<span style="color:#444; font-size:0.7rem;">暂无圣物</span>' : '';
+            data.relics.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'relic-item'; div.innerText = name;
+                list.appendChild(div);
+            });
+            list.scrollTop = list.scrollHeight;
+        }
+
+        function showFeedback(text, color = "#00ffcc") {
+            const fb = document.getElementById('feedbackMsg');
+            fb.innerText = text; fb.style.color = color; fb.style.opacity = "1";
+            setTimeout(() => { fb.style.opacity = "0"; }, 2000);
+        }
+
+        function logout() { localStorage.removeItem('cyberKarmaEmail'); location.reload(); }
+    </script>
+</body>
+</html>

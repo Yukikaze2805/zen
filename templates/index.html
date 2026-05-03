@@ -2,11 +2,67 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sufi Cyber Sanctuary</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* 按钮区域 */
+        .feature-buttons {
+            margin-top: 50px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .feature-btn {
+            background: transparent;
+            border: 1px solid #666;
+            color: #AAAAAA;
+            padding: 12px 25px;
+            text-decoration: none;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .feature-btn:hover {
+            border-color: #FFFFFF;
+            color: #FFFFFF;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        /* 神圣之光动画（pulse动画需在main.css中已定义） */
+        #divine-light {
+            animation: pulse 2s infinite, glowEffect 3s infinite !important;
+        }
+
+        @keyframes glowEffect {
+            0% { filter: drop-shadow(0 0 8px #FFD700); }
+            50% { filter: drop-shadow(0 0 25px #FFD700); }
+            100% { filter: drop-shadow(0 0 8px #FFD700); }
+        }
+
+        /* 管理员入口低调样式 */
+        .admin-entry {
+            margin-top: 60px;
+        }
+
+        .admin-entry a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: color 0.3s;
+        }
+
+        .admin-entry a:hover {
+            color: #666;
+        }
+    </style>
 </head>
 <body>
     <div style="text-align: center;">
+        <!-- 鸟居入口 -->
         <a href="/shrine" style="text-decoration: none; cursor: pointer;">
             <svg id="torii" viewBox="0 0 200 150" width="300">
                 <rect x="20" y="30" width="160" height="8" fill="#FFFFFF" />
@@ -18,6 +74,19 @@
 
         <h1 class="fade-in">此為虛空，亦是圓滿</h1>
         <p class="whisper">（點擊鳥居，步入慧忍神宮 / Click to Enter...）</p>
+
+        <!-- 功能快捷入口 -->
+        <div class="feature-buttons">
+            <a href="/daily-prayer" class="feature-btn">每日祈願</a>
+            <a href="/daily-checkin" class="feature-btn">每日簽到</a>
+            <a href="/meditation" class="feature-btn">靜心儀式</a>
+            <a href="/profile" class="feature-btn">用戶中心</a>
+        </div>
+
+        <!-- 管理员入口（低调） -->
+        <div class="admin-entry">
+            <a href="/admin/login">ADMIN LOGOS</a>
+        </div>
     </div>
 </body>
 </html>

@@ -2,15 +2,121 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>後台登入</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>慧忍神宮 - 後台登錄</title>
+    <!-- 引入项目公共样式（如需可保留） -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        /* 全局重置与背景 */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 400px;
+            padding: 3rem 2rem;
+            border: 1px solid #333;
+            background-color: #0d0d0d;
+            box-sizing: border-box;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            letter-spacing: 0.3rem;
+            font-weight: 300;
+            margin: 0 0 2rem 0;
+            color: #fff;
+        }
+
+        .error-tip {
+            color: #ff6b6b;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .input-item {
+            margin-bottom: 2rem;
+        }
+
+        .input-item input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #555;
+            color: #FFFFFF;
+            font-size: 1.1rem;
+            padding: 0.8rem;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .input-item input:focus {
+            border-color: #FFFFFF;
+        }
+
+        /* 登录按钮样式（若 main.css 中定义了 .btn 则继承，此处增加保底） */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            background: transparent;
+            border: 1px solid #ccc;
+            color: #ccc;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+        .btn:hover {
+            background: #ccc;
+            color: #0d0d0d;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 1.8rem;
+            color: #999;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #fff;
+        }
+    </style>
 </head>
-<body style="background:#111; color:#fff; text-align:center; padding-top:100px;">
-<h2>後台登入</h2>
-<form method="POST">
-    <input type="password" name="password" placeholder="輸入密碼" style="padding:10px; font-size:16px;"><br><br>
-    <button type="submit">登入</button>
-</form>
-<br>
-<a href="/" style="color:#999;">返回首頁</a>
+<body>
+    <div class="login-box">
+        <h1 class="login-title">後 台 登 錄</h1>
+        
+        {% if error %}
+        <p class="error-tip">{{ error }}</p>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="input-item">
+                <input type="password" name="password" placeholder="請輸入管理員密碼" required>
+            </div>
+            <button type="submit" class="btn">登 錄</button>
+        </form>
+        
+        <a href="/" class="back-link">← 返回首頁</a>
+    </div>
 </body>
 </html>
