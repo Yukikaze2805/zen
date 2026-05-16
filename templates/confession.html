@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>懺悔室 | 慧忍神宮</title>
     <style>
-        /* 核心视觉：保持原样 */
+        /* 核心视觉：黑金神宫风格 */
         body {
             margin: 0;
             background-color: #000;
@@ -60,6 +60,7 @@
 
         .btn-submit:hover { background: #d4af37; color: #000; }
 
+        /* 回复展示区域 */
         #result-display {
             margin-top: 60px;
             display: none;
@@ -80,6 +81,7 @@
             min-height: 50px;
         }
 
+        /* 金色回执区域 */
         .receipt-area {
             font-size: 0.8rem;
             color: #d4af37;
@@ -91,7 +93,7 @@
             font-style: italic;
         }
 
-        /* --- 新增：打赏区域样式 --- */
+        /* 付款/打赏区域样式 */
         .donation-wrap {
             margin-top: 35px;
             opacity: 0;
@@ -107,6 +109,7 @@
             padding: 10px 30px;
             letter-spacing: 2px;
             transition: 0.3s;
+            cursor: pointer;
         }
 
         .donation-btn:hover {
@@ -116,10 +119,11 @@
 
         .back-link {
             display: block;
-            margin-top: 80px;
-            color: #222;
+            margin-top: 40px;
+            color: #fff;
             text-decoration: none;
             font-size: 0.8rem;
+            padding-bottom: 30px;
         }
 
         .loading-text { color: #444; font-style: italic; }
@@ -143,7 +147,7 @@
             <div id="receipt-text" class="receipt-area"></div>
 
             <div id="donation-area" class="donation-wrap">
-                <a href="https://www.checkout-ds24.com/redir/691619/AFFILIATE/CAMPAIGNKEY" target="_blank" class="donation-btn">
+                <a href="https://www.checkout-ds24.com/redir/691619/AFFILIATE/CAMPAIGNKEY" target="_blank" id="actual-link" class="donation-btn">
                     隨 喜 供 養（ 結 清 因 果 ）
                 </a>
             </div>
@@ -166,11 +170,18 @@
 
             if (!input.trim()) return;
 
-            // 初始状态：隐藏之前的回执和打赏按钮
+            // 1. 初始化界面状态
             display.style.display = 'block';
             zenReply.innerHTML = '<span class="loading-text">正在讀取業障代碼...</span>';
             receipt.style.opacity = '0';
             donationArea.style.opacity = '0';
+
+            // 2. 兜底逻辑：如果 8 秒内 AI 没反应，强制显示付款链接，防止网页看起来像坏了
+            const forceShowTimer = setTimeout(() => {
+                if (donationArea.style.opacity == '0') {
+                    donationArea.style.opacity = '1';
+                }
+            }, 8000);
 
             try {
                 const response = await fetch('/api/confess', {
@@ -182,28 +193,38 @@
                 const data = await response.json();
 
                 if (response.ok) {
+                    clearTimeout(forceShowTimer); // 成功拿到数据，清除兜底计时器
                     zenReply.innerText = '';
-                    // 调用打字机效果
+
+                    // 开始打字机效果
                     startTypeWriter(zenReply, data.zen_reply, () => {
-                        // 1. 打字结束后，显示金色回执
+                        // A. 打字结束后显示金色回执
                         receipt.innerText = data.receipt;
                         receipt.style.opacity = '1';
 
-                        // 2. 延迟 1.5 秒后，缓缓浮现打赏链接
+                        // B. 延迟 1.5 秒后显示打赏链接
                         setTimeout(() => {
                             donationArea.style.opacity = '1';
                         }, 1500);
                     });
+                } else {
+                    throw new Error("API 响应失败");
                 }
             } catch (error) {
-                zenReply.innerText = "網絡業障，感應中斷。";
+                console.error("Error:", error);
+                zenReply.innerText = "此時因果波動，虛空無聲。唯有自省，方見本心。";
+                // 发生错误（如超时）时，直接显示打赏链接
+                setTimeout(() => {
+                    donationArea.style.opacity = '1';
+                }, 1000);
             }
         }
 
+        // 打字机核心函数
         function startTypeWriter(element, text, onComplete) {
             isTyping = true;
             let i = 0;
-            const speed = 60;
+            const speed = 50;
 
             function type() {
                 if (i < text.length) {
