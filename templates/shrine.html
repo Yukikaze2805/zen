@@ -6,30 +6,23 @@
     <title>慧忍神宮 | Inner Shrine</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
-        /* --- 神宮标题呼吸发光效果 --- */
+        /* --- 原有效果保留 --- */
         h2 {
             animation: shrineTitleBreath 4s ease-in-out infinite;
         }
-
         @keyframes shrineTitleBreath {
             0%, 100% {
-                text-shadow: 0 0 10px rgba(255,255,255,0.5),
-                             0 0 20px rgba(255,255,255,0.3);
+                text-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3);
             }
             50% {
-                text-shadow: 0 0 20px rgba(255,255,255,0.9),
-                             0 0 40px rgba(255,255,255,0.5),
-                             0 0 60px rgba(255,255,255,0.3);
+                text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 40px rgba(255,255,255,0.5), 0 0 60px rgba(255,255,255,0.3);
             }
         }
-
-        /* --- 副标题呼吸效果 --- */
         .shrine-subtitle {
             color: #666;
             margin-top: 10px;
             animation: subtitleBreath 3s ease-in-out infinite;
         }
-
         @keyframes subtitleBreath {
             0%, 100% {
                 opacity: 0.5;
@@ -40,34 +33,25 @@
                 text-shadow: 0 0 15px rgba(102,102,102,0.6);
             }
         }
-
-        /* --- 输入框聚焦时的呼吸光晕 --- */
         input:focus {
             border-bottom-color: #FFFFFF !important;
             box-shadow: 0 2px 10px rgba(255,255,255,0.3);
             transition: all 0.3s ease;
         }
-
-        /* --- 按钮呼吸灯效果 --- */
         button[type="submit"] {
             animation: buttonBreath 3s ease-in-out infinite;
         }
-
         @keyframes buttonBreath {
             0%, 100% {
                 box-shadow: 0 0 5px rgba(255,255,255,0.2);
             }
             50% {
-                box-shadow: 0 0 15px rgba(255,255,255,0.5),
-                            0 0 25px rgba(255,255,255,0.3);
+                box-shadow: 0 0 15px rgba(255,255,255,0.5), 0 0 25px rgba(255,255,255,0.3);
             }
         }
-
-        /* --- 返回链接呼吸效果 --- */
         a[href="/"] {
             animation: linkBreath 3s ease-in-out infinite;
         }
-
         @keyframes linkBreath {
             0%, 100% {
                 opacity: 0.4;
@@ -77,8 +61,6 @@
                 text-shadow: 0 0 10px rgba(68,68,68,0.5);
             }
         }
-
-        /* 通用按钮和链接过渡 */
         .action-link {
             display: inline-block;
             text-decoration: none;
@@ -95,8 +77,6 @@
             border-color: #fff;
             box-shadow: 0 0 15px rgba(255,255,255,0.5);
         }
-
-        /* 会员横幅 */
         .member-banner {
             background: #111;
             color: #333;
@@ -113,8 +93,6 @@
             font-size: 0.8rem;
             margin-bottom: 15px;
         }
-
-        /* 邮箱订阅区域 */
         .subscribe-section {
             margin-top: 60px;
             padding-top: 40px;
@@ -126,8 +104,6 @@
             letter-spacing: 3px;
             margin-bottom: 20px;
         }
-
-        /* 弹窗备用（不影响当前） */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -172,8 +148,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .amount-btn:hover,
-        .amount-btn.active {
+        .amount-btn:hover, .amount-btn.active {
             border-color: #FFFFFF;
             background-color: #FFFFFF;
             color: #0d0d0d;
@@ -196,8 +171,6 @@
             gap: 1rem;
             justify-content: center;
         }
-
-        /* 圣物生成按钮单独配色（可选） */
         .sacred-btn {
             display: inline-block;
             background: transparent;
@@ -215,75 +188,102 @@
             color: #fff;
             box-shadow: 0 0 15px rgba(108,92,231,0.5);
         }
+
+        /* --- 统一输入框样式（并排用） --- */
+        .shrine-input {
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+            padding: 8px 0;
+            box-sizing: border-box;
+        }
+        .shrine-input::placeholder {
+            color: rgba(255,255,255,0.6);
+            font-size: 1rem;
+        }
+        /* 按钮在行内时的样式 */
+        #submitBtn {
+            margin: 0 !important;          /* 覆盖原有 margin-top */
+            flex-shrink: 0;
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            font-size: 1rem;
+            padding: 8px 30px;
+            cursor: pointer;
+            letter-spacing: 8px;
+            transition: all 0.3s ease;
+        }
+        /* 表单行布局 */
+        #messageForm {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
     <div style="text-align: center;">
-        <!-- 神宫标题 -->
         <h2 style="letter-spacing: 15px; font-size: 2rem;">慧忍神宮</h2>
         <p class="shrine-subtitle">INNER SHRINE OF WISDOM</p>
 
-        <!-- 会员状态横幅（根据后端变量显示） -->
         {% if not is_member %}
         <div class="member-banner">由於缺少聖殿庇護，虛空正受到廣告雜訊干擾</div>
         {% else %}
         <div class="member-gold">✨ 聖殿會員：沉浸式虛空已開啟</div>
         {% endif %}
 
-        <!-- 留言表单 -->
+        <!-- 留言表单：两个输入框 + 按钮在同一行 -->
         <form id="messageForm">
             <input type="text"
                    name="user_name"
                    id="userName"
-                   style="background: transparent; border: none; border-bottom: 1px solid #FFFFFF; color: #FFFFFF; font-size: 1.2rem; width: 400px; text-align: center; margin-top: 40px; outline: none;"
+                   class="shrine-input"
                    placeholder="（您的稱呼，不填則為匿名信眾）"
                    autocomplete="off">
-
             <input type="text"
                    name="message_content"
                    id="messageContent"
-                   style="background: transparent; border: none; border-bottom: 1px solid #FFFFFF; color: #FFFFFF; font-size: 1.5rem; width: 400px; text-align: center; margin-top: 30px; outline: none;"
+                   class="shrine-input"
                    placeholder="（在此述說您的苦難...）"
                    autocomplete="off"
                    required>
-
             <button type="submit"
                     id="submitBtn"
-                    style="background: transparent; border: 1px solid #FFFFFF; color: #FFFFFF; font-size: 1rem; padding: 8px 30px; margin-top: 50px; cursor: pointer; letter-spacing: 8px; transition: all 0.3s ease;"
                     onmouseover="this.style.background='#FFFFFF'; this.style.color='#000000';"
                     onmouseout="this.style.background='transparent'; this.style.color='#FFFFFF';">
                 呈 上
             </button>
         </form>
 
-        <!-- 功能入口区域：数字香火、功德格、忏悔室、圣殿会员、圣物生成 -->
+        <!-- 功能入口区域（保持不变） -->
         <div style="margin-top: 60px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
-            <!-- 数字香火按钮（点击跳转 /incense） -->
-            <button onclick="location.href='/incense'" 
-                    class="action-link" 
+            <button onclick="location.href='/incense'"
+                    class="action-link"
                     style="background: transparent; cursor: pointer;">
                 數 字 香 火
             </button>
-            
-            <!-- 功德格入口 -->
             <a href="/merit" class="action-link">☯ 步入功德格</a>
-            
-            <!-- 忏悔室入口 -->
             <a href="/confession" class="action-link" style="color: #FFD700; border-color: #FFD700;">進入懺悔室</a>
-            
-            <!-- 圣殿会员按钮（根据状态变化文字和链接） -->
             <a href="/membership" class="action-link" style="color: #d4af37; border-color: #d4af37;">
                 {% if is_member %} 進入內殿儀式 {% else %} 覺醒 · 聖殿會員 {% endif %}
             </a>
-
-            <!-- 新增：圣物生成体系入口（独立样式，避免重叠） -->
             <a href="{{ url_for('sacred_artifact') }}" class="sacred-btn">圣物生成體系</a>
         </div>
 
-        <!-- 邮箱订阅区域 -->
+        <!-- 邮箱订阅区域（保持不变） -->
         <div class="subscribe-section">
             <p>訂閱神宮慧音</p>
-
             <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px;">
                 <label style="color: #AAA; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                     <input type="checkbox"
@@ -292,14 +292,12 @@
                     <span>免費訂閱神宮更新</span>
                 </label>
             </div>
-
             <div id="emailInputContainer" style="display: none; margin-top: 15px;">
                 <input type="email"
                        id="subscriberEmail"
                        style="background: transparent; border: none; border-bottom: 1px solid #666; color: #FFFFFF; font-size: 1rem; width: 300px; text-align: center; outline: none; padding: 5px 0;"
                        placeholder="請輸入您的郵箱地址"
                        autocomplete="email">
-
                 <button type="button"
                         id="subscribeBtn"
                         style="background: transparent; border: 1px solid #666; color: #AAAAAA; font-size: 0.9rem; padding: 6px 25px; margin-top: 20px; cursor: pointer; letter-spacing: 5px; transition: all 0.3s ease;"
@@ -310,27 +308,23 @@
             </div>
         </div>
 
-        <!-- 返回首页链接 -->
         <a href="/" style="margin-top: 80px; display: block; color: #444; text-decoration: none;">← 返回虛空 / RETURN TO VOID</a>
     </div>
 
-    <!-- 数字香火弹窗（备用，当前不触发） -->
+    <!-- 数字香火弹窗（保持不变） -->
     <div class="modal-overlay" id="incenseModal">
         <div class="modal-content">
             <h2 class="modal-title">數 字 香 火</h2>
             <p class="modal-desc" style="color:#999;">一念誠心，功德無量；香火所至，神明悉知</p>
-
             <div class="amount-grid">
                 {% for amount in fixed_amounts %}
                 <button class="amount-btn" data-amount="{{ amount }}">{{ amount }} 元</button>
                 {% endfor %}
             </div>
-
             <div class="custom-amount">
                 <input type="number" id="customAmount" placeholder="自定義捐功德金額" min="{{ min_amount }}" step="0.01">
                 <p class="custom-tip" style="color:#777; font-size:0.85rem; margin-top:0.5rem;">最低捐贈金額：{{ min_amount }} 元</p>
             </div>
-
             <div class="modal-btn-group">
                 <button class="btn btn-close" id="closeModal" style="border:1px solid #666; color:#999;">關 閉</button>
                 <button class="btn" id="donateBtn">確 認 捐 贈</button>
@@ -339,7 +333,7 @@
     </div>
 
     <script>
-        // 邮箱订阅复选框交互
+        // 邮箱订阅（不变）
         document.getElementById('subscribeCheck').addEventListener('change', function() {
             const emailContainer = document.getElementById('emailInputContainer');
             if (this.checked) {
@@ -349,35 +343,27 @@
                 emailContainer.style.display = 'none';
             }
         });
-
-        // 订阅按钮点击事件
         document.getElementById('subscribeBtn').addEventListener('click', async function() {
             const email = document.getElementById('subscriberEmail').value.trim();
             const subscribeBtn = document.getElementById('subscribeBtn');
-
             if (!email) {
                 alert('請輸入郵箱地址');
                 return;
             }
-
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 alert('請輸入有效的郵箱地址');
                 return;
             }
-
             subscribeBtn.disabled = true;
             subscribeBtn.innerText = '處 理 中...';
-
             try {
                 const res = await fetch('/api/subscribe', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email })
                 });
-
                 const result = await res.json();
-
                 if (res.ok) {
                     alert(result.message || '訂閱成功！感謝您的支持。');
                     document.getElementById('subscriberEmail').value = '';
@@ -395,16 +381,14 @@
             }
         });
 
-        // 留言表单提交
+        // 留言提交（不变）
         document.getElementById('messageForm').onsubmit = async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
             const nameInput = document.getElementById('userName');
             const contentInput = document.getElementById('messageContent');
-
             submitBtn.disabled = true;
             submitBtn.innerText = '傳 送 中...';
-
             try {
                 const res = await fetch('/api/submit', {
                     method: 'POST',
@@ -414,7 +398,6 @@
                         content: contentInput.value.trim()
                     })
                 });
-
                 const result = await res.json();
                 alert(result.message || result.error);
                 if (res.ok) {
@@ -429,27 +412,23 @@
                 submitBtn.innerText = '呈 上';
             }
         };
-
-        // 回车提交留言（全局监听）
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && document.activeElement.tagName !== 'BUTTON') {
                 document.getElementById('submitBtn').click();
             }
         });
 
-        // 数字香火弹窗备用逻辑（不会主动弹出，保留供以后使用）
+        // 数字香火弹窗（不变）
         (function(){
             const modal = document.getElementById('incenseModal');
             const closeModal = document.getElementById('closeModal');
             const donateBtn = document.getElementById('donateBtn');
             const amountBtns = document.querySelectorAll('.amount-btn');
             const customAmount = document.getElementById('customAmount');
-
             if(closeModal) {
                 closeModal.addEventListener('click', () => modal.classList.remove('active'));
                 modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
             }
-
             if(amountBtns) {
                 amountBtns.forEach(btn => {
                     btn.addEventListener('click', () => {
@@ -459,13 +438,11 @@
                     });
                 });
             }
-
             if(customAmount) {
                 customAmount.addEventListener('input', () => {
                     if(customAmount.value) amountBtns.forEach(btn => btn.classList.remove('active'));
                 });
             }
-
             if(donateBtn) {
                 donateBtn.addEventListener('click', async () => {
                     const name = document.getElementById('userName').value.trim() || '匿名信眾';
@@ -476,18 +453,15 @@
                     } else if (customAmount.value) {
                         selectedAmount = customAmount.value;
                     }
-
                     if (!selectedAmount) {
                         alert('請選擇或輸入捐贈金額');
                         return;
                     }
-
                     const amount = parseFloat(selectedAmount);
                     if (isNaN(amount) || amount < {{ min_amount }}) {
                         alert(`捐功德最低金額為 {{ min_amount }} 元`);
                         return;
                     }
-
                     try {
                         const res = await fetch('/api/donate', {
                             method: 'POST',

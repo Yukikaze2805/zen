@@ -5,6 +5,12 @@
     <title>用戶中心 | Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
+        /* 强制显示滚动条，避免内容显示不全 */
+        html, body {
+            overflow-y: auto;
+            height: 100%;
+        }
+
         .profile-container {
             max-width: 900px;
             margin: 0 auto;
@@ -234,7 +240,7 @@
 
         <div class="progress-section">
             <div class="section-title">修行進度</div>
-            
+
             <div class="circular-progress">
                 <svg width="200" height="200">
                     <circle class="progress-circle-bg" cx="100" cy="100" r="85"></circle>
@@ -248,7 +254,7 @@
                     <div class="progress-days">{{ continuous_days }}/30天</div>
                 </div>
             </div>
-            
+
             <div class="progress-hint" title="距離30天連續簽到還有{{ days_remaining }}天">
                 鼠標懸浮查看詳情
             </div>
@@ -256,7 +262,7 @@
 
         <div class="daily-tasks">
             <div class="section-title">今日完成狀態</div>
-            
+
             <div class="task-list">
                 <div class="task-item">
                     <span class="task-name">簽到</span>

@@ -3,113 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>忏悔室 | 慧忍神宫</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <title>懺悔室 | 慧忍神宮</title>
     <style>
-        /* 针对空白区域的布局补丁，确保它继承庄严的黑色背景 */
+        /* 核心视觉：保持原样 */
         body {
             margin: 0;
-            background-color: #000; /* 强制黑色背景防止白屏 */
+            background-color: #000;
+            color: #d4af37;
+            font-family: "PingFang SC", "Microsoft YaHei", serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
+
         .shrine-container {
             width: 90%;
-            max-width: 600px;
+            max-width: 800px;
             text-align: center;
-            padding: 20px;
         }
+
+        h1 {
+            letter-spacing: 15px;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
         textarea {
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid #444;
-            color: #eee;
-            padding: 15px;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
-        #ai-response {
-            margin-top: 30px;
+            height: 180px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #222;
+            color: #ccc;
             padding: 20px;
-            border-top: 1px solid #333;
-            color: #ffd700; /* 禅师的开导用金色 */
-            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            outline: none;
+            resize: none;
+            transition: 0.3s;
+        }
+
+        textarea:focus { border-color: #444; background: rgba(255,255,255,0.05); }
+
+        .btn-submit {
+            margin-top: 30px;
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 12px 60px;
+            cursor: pointer;
+            letter-spacing: 10px;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover { background: #d4af37; color: #000; }
+
+        #result-display {
+            margin-top: 60px;
+            display: none;
+        }
+
+        .zen-label {
+            font-size: 0.75rem;
+            color: #555;
+            letter-spacing: 5px;
+            margin-bottom: 25px;
+        }
+
+        .zen-reply-content {
+            font-size: 1.2rem;
+            line-height: 2.2;
+            color: #eee;
+            margin-bottom: 40px;
             min-height: 50px;
         }
-        .loading { animation: pulse 1.5s infinite; color: #888; }
-        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        .receipt-area {
+            font-size: 0.8rem;
+            color: #d4af37;
+            font-family: serif;
+            letter-spacing: 2px;
+            margin-top: 40px;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            font-style: italic;
+        }
+
+        /* --- 新增：打赏区域样式 --- */
+        .donation-wrap {
+            margin-top: 35px;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .donation-btn {
+            display: inline-block;
+            color: #d4af37;
+            text-decoration: none;
+            font-size: 0.8rem;
+            border: 1px solid #d4af37;
+            padding: 10px 30px;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .donation-btn:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 80px;
+            color: #222;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        .loading-text { color: #444; font-style: italic; }
     </style>
 </head>
-<body class="cyber-bg">
+<body>
+
     <div class="shrine-container">
-        <h1 class="glow-text" style="color: white; letter-spacing: 5px;">忏 悔 室</h1>
-        <p style="color: #666; font-size: 0.8rem; margin-bottom: 30px;">CONFESSIONAL VOID</p>
-        
-        <div class="confess-box">
-            <textarea id="userInput" placeholder="诉说你的苦难或罪业..." rows="5"></textarea>
-            <div class="button-group">
-                <button onclick="sendConfession()" id="submitBtn" class="zen-btn">呈上心声</button>
-                <button onclick="window.location.href='/'" class="zen-btn-secondary">返回虚空</button>
+        <h1>懺 悔 室</h1>
+        <textarea id="confess-input" placeholder="訴說你的執念..."></textarea>
+
+        <div>
+            <button class="btn-submit" onclick="processConfession()">交付因果</button>
+        </div>
+
+        <div id="result-display">
+            <div class="zen-label">【 慧 忍 禪 師 感 應 】</div>
+
+            <div id="zen-reply" class="zen-reply-content"></div>
+
+            <div id="receipt-text" class="receipt-area"></div>
+
+            <div id="donation-area" class="donation-wrap">
+                <a href="https://www.checkout-ds24.com/redir/691619/AFFILIATE/CAMPAIGNKEY" target="_blank" class="donation-btn">
+                    隨 喜 供 養（ 結 清 因 果 ）
+                </a>
             </div>
         </div>
 
-        <div class="response-area">
-            <div id="ai-response">禅师正在静候缘分...</div>
-        </div>
+        <a href="/shrine" class="back-link">← 返回內殿 / RETURN</a>
     </div>
 
     <script>
-        async function sendConfession() {
-            const userInput = document.getElementById('userInput').value;
-            const responseDiv = document.getElementById('ai-response');
-            const submitBtn = document.getElementById('submitBtn');
+        let isTyping = false;
 
-            if (!userInput.trim()) {
-                alert("无声之语，禅师难以感应。");
-                return;
-            }
+        async function processConfession() {
+            if (isTyping) return;
 
-            // 1. 设置状态
-            submitBtn.disabled = true;
-            responseDiv.innerHTML = '<span class="loading">禅师正在感应你的业障，请稍候...</span>';
+            const input = document.getElementById('confess-input').value;
+            const display = document.getElementById('result-display');
+            const zenReply = document.getElementById('zen-reply');
+            const receipt = document.getElementById('receipt-text');
+            const donationArea = document.getElementById('donation-area');
 
-            // 2. 超时处理逻辑 (15秒内无响应则判定为网络业障)
-            const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('TIMEOUT')), 15000)
-            );
+            if (!input.trim()) return;
+
+            // 初始状态：隐藏之前的回执和打赏按钮
+            display.style.display = 'block';
+            zenReply.innerHTML = '<span class="loading-text">正在讀取業障代碼...</span>';
+            receipt.style.opacity = '0';
+            donationArea.style.opacity = '0';
 
             try {
-                // 竞速执行：要么 API 先回，要么 15 秒先到
-                const response = await Promise.race([
-                    fetch('/api/confess', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ content: userInput })
-                    }),
-                    timeoutPromise
-                ]);
+                const response = await fetch('/api/confess', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: input })
+                });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    responseDiv.innerText = data.reply;
-                } else {
-                    throw new Error(data.reply || '后端响应异常');
-                }
+                    zenReply.innerText = '';
+                    // 调用打字机效果
+                    startTypeWriter(zenReply, data.zen_reply, () => {
+                        // 1. 打字结束后，显示金色回执
+                        receipt.innerText = data.receipt;
+                        receipt.style.opacity = '1';
 
-            } catch (error) {
-                console.error("Error Detail:", error);
-                if (error.message === 'TIMEOUT') {
-                    responseDiv.innerHTML = '<span style="color: #ff4d4d;">【感应超时】业障过深，信号难以触达西天。<br>提示：请检查网络代理是否开启（需要访问 Google 服务）。</span>';
-                } else {
-                    responseDiv.innerHTML = '<span style="color: #ff4d4d;">【因果阻断】禅师闭关中，请稍后再试。</span>';
+                        // 2. 延迟 1.5 秒后，缓缓浮现打赏链接
+                        setTimeout(() => {
+                            donationArea.style.opacity = '1';
+                        }, 1500);
+                    });
                 }
-            } finally {
-                submitBtn.disabled = false;
+            } catch (error) {
+                zenReply.innerText = "網絡業障，感應中斷。";
             }
+        }
+
+        function startTypeWriter(element, text, onComplete) {
+            isTyping = true;
+            let i = 0;
+            const speed = 60;
+
+            function type() {
+                if (i < text.length) {
+                    element.innerText += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    isTyping = false;
+                    if (onComplete) onComplete();
+                }
+            }
+            type();
         }
     </script>
 </body>

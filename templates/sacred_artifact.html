@@ -2,291 +2,489 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
-    <title>圣物生成体系 | 慧忍神宮</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>圣迹穹仪 · 圣咏缭绕</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
     <style>
-        /* 滚动支持 */
-        html, body {
-            height: auto;
-            min-height: 100vh;
-            overflow-y: auto !important;
-            overflow-x: hidden;
-        }
-        body {
-            background: linear-gradient(135deg, #0a0f1e 0%, #0c1222 100%);
-            color: #e0e0e0;
-            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+        * {
             margin: 0;
-            padding: 2rem;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .cyber-card {
-            background: rgba(15, 25, 45, 0.65);
-            backdrop-filter: blur(10px);
-            border-radius: 32px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 255, 255, 0.1);
-            padding: 2rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .cyber-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(0, 255, 255, 0.2);
-            border-color: rgba(0, 255, 255, 0.6);
-        }
-        .neon-title {
-            font-size: 2.5rem;
-            text-align: center;
-            letter-spacing: 4px;
-            background: linear-gradient(135deg, #aaffff, #7a4cff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
-            margin-bottom: 2rem;
-        }
-        .cyber-btn {
-            background: rgba(0, 255, 255, 0.1);
-            border: 1px solid #0ff;
-            color: #0ff;
-            padding: 10px 24px;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.2s;
-            backdrop-filter: blur(4px);
-        }
-        .cyber-btn:hover {
-            background: #0ff;
-            color: #0a0f1e;
-            box-shadow: 0 0 12px #0ff;
-            transform: scale(1.02);
-        }
-        .artifact-display, .guardian-display {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 24px;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            text-align: center;
-            border-left: 4px solid #0ff;
+
+        body {
+            background: #000000;
+            color: #f0f3fa;
+            font-family: 'Inter', 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            line-height: 1.5;
             position: relative;
         }
-        .icon-big {
-            font-size: 4rem;
-            filter: drop-shadow(0 0 6px cyan);
-            margin-bottom: 0.5rem;
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(210, 180, 140, 0.02) 0%, #000 90%);
+            pointer-events: none;
+            z-index: 0;
         }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(0deg, rgba(255, 245, 215, 0.012) 0px, rgba(255, 245, 215, 0.012) 1px, transparent 1px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 2rem 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cyber-card {
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            border: 1px solid rgba(230, 215, 175, 0.3);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.7), 0 0 0 0.5px rgba(230, 215, 175, 0.2) inset;
+            transition: all 0.35s ease;
+            padding: 1.8rem;
+        }
+
+        .cyber-card:hover {
+            border-color: rgba(240, 210, 140, 0.65);
+            box-shadow: 0 25px 40px -15px rgba(200, 170, 100, 0.2), 0 0 0 1px rgba(230, 200, 130, 0.3) inset;
+            transform: translateY(-2px);
+        }
+
+        .neon-title {
+            font-size: 2.8rem;
+            text-align: center;
+            letter-spacing: 4px;
+            font-weight: 500;
+            color: #fff3e0;
+            text-shadow: 0 0 5px rgba(255, 245, 210, 0.4), 0 0 12px rgba(210, 180, 120, 0.2);
+            animation: sacredBreathe 3.5s infinite ease-in-out;
+            margin-bottom: 0.5rem;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        @keyframes sacredBreathe {
+            0% { text-shadow: 0 0 2px rgba(255, 250, 220, 0.3), 0 0 6px rgba(210, 180, 110, 0.1); opacity: 0.92; }
+            50% { text-shadow: 0 0 12px rgba(255, 245, 200, 0.7), 0 0 20px rgba(220, 190, 120, 0.4); opacity: 1; }
+            100% { text-shadow: 0 0 2px rgba(255, 250, 220, 0.3), 0 0 6px rgba(210, 180, 110, 0.1); opacity: 0.92; }
+        }
+
+        .breathing-text {
+            animation: softGlow 3s infinite ease;
+        }
+        @keyframes softGlow {
+            0% { text-shadow: 0 0 1px rgba(255,245,210,0.2); color: #f5f0e6; }
+            50% { text-shadow: 0 0 6px rgba(235,205,145,0.5); color: #fffef5; }
+            100% { text-shadow: 0 0 1px rgba(255,245,210,0.2); color: #f5f0e6; }
+        }
+
+        .sacred-btn {
+            background: rgba(230, 210, 160, 0.08);
+            border: 1px solid #e6d0a0;
+            color: #f5e6ce;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.25s;
+            backdrop-filter: blur(6px);
+            letter-spacing: 1px;
+        }
+
+        .sacred-btn:hover {
+            background: #e6d0a0;
+            color: #0a0a0a;
+            box-shadow: 0 0 18px rgba(230, 200, 120, 0.6);
+            border-color: #fff2df;
+            transform: scale(1.02);
+        }
+
+        .small-sacred-btn {
+            background: rgba(230, 210, 150, 0.1);
+            border: 1px solid #dac292;
+            color: #eeddbd;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .small-sacred-btn:hover {
+            background: #dac292;
+            color: #000;
+            box-shadow: 0 0 8px #e6cfa0;
+        }
+
+        .sacred-input {
+            background: rgba(10, 8, 5, 0.8);
+            border: 1px solid #cfb87c;
+            border-radius: 48px;
+            padding: 12px 20px;
+            color: #f7efda;
+            width: 85%;
+            outline: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .sacred-input:focus {
+            border-color: #f7e1a4;
+            box-shadow: 0 0 12px rgba(230, 190, 100, 0.5);
+        }
+
+        .relic-display, .guardian-display {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 1.5rem;
+            padding: 1.4rem;
+            margin-top: 1.5rem;
+            border-left: 4px solid #e6cfa0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        }
+
+        .icon-bless {
+            font-size: 3.6rem;
+            filter: drop-shadow(0 0 6px #f3e0b0);
+        }
+
         .guardian-avatar {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(145deg, #1e2a3a, #0f1722);
+            width: 95px;
+            height: 95px;
+            background: radial-gradient(circle at 30% 20%, #231f18, #050302);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            border: 2px solid cyan;
-            box-shadow: 0 0 15px cyan;
-            margin-bottom: 1rem;
+            border: 2px solid #e6cfa0;
+            box-shadow: 0 0 12px rgba(230,200,120,0.4);
         }
+
         .row {
             display: flex;
             gap: 2rem;
             flex-wrap: wrap;
-            margin-top: 2rem;
+            margin: 2rem 0 1rem;
         }
         .col {
             flex: 1;
             min-width: 280px;
         }
-        .cyber-input {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid #0ff;
-            border-radius: 60px;
-            padding: 10px 20px;
-            color: #0ff;
-            width: 80%;
-            margin-top: 10px;
-            outline: none;
+
+        .grace-card {
+            background: linear-gradient(135deg, rgba(0,0,0,0.92), rgba(20,16,8,0.95));
+            border: 1px solid #ecca8c;
+            box-shadow: 0 0 15px rgba(210, 175, 80, 0.2);
+            position: relative;
         }
-        .cyber-input::placeholder {
-            color: #6c8db0;
+        .grace-card::before {
+            content: "✦ 圣光恩典 ✦";
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.7rem;
+            background: rgba(210, 180, 100, 0.2);
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #eeddbb;
+            letter-spacing: 1px;
         }
-        .back-link {
-            text-align: center;
-            margin-top: 3rem;
+        .grace-badge {
+            color: #eace9b;
         }
-        .back-link a {
-            color: #88aaff;
-            text-decoration: none;
-            border-bottom: 1px dashed #88aaff;
+
+        .fusion-result {
+            background: rgba(0,0,0,0.65);
+            border-radius: 1.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px dashed #cfb67a;
         }
-        .back-link a:hover {
-            color: cyan;
+
+        .history-panel {
+            max-height: 280px;
+            overflow-y: auto;
+            margin-top: 0.8rem;
         }
-        .power-bar {
-            width: 100%;
-            height: 8px;
-            background: #2a3a4a;
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
+        .history-item {
+            background: rgba(230, 200, 130, 0.05);
+            border-left: 3px solid #e1bf81;
+            padding: 0.7rem;
+            margin-bottom: 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
         }
-        .power-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, cyan, #7a4cff);
-            border-radius: 4px;
-            transition: width 0.5s;
-        }
-        .gallery-item {
-            text-align: center;
-            background: rgba(0,0,0,0.4);
-            border-radius: 20px;
-            padding: 10px;
-            transition: 0.2s;
-        }
+
         .gallery-item img {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             object-fit: cover;
             border-radius: 20px;
-            border: 2px solid cyan;
-            box-shadow: 0 0 8px cyan;
+            border: 1px solid #cfb87c;
+            background: #110e08;
         }
-        .gallery-item p {
-            margin-top: 8px;
-            font-size: 0.9rem;
-            color: #ccf;
+
+        .blessing-text {
+            color: #f3e2be;
+            animation: breatheSoft 2.8s infinite;
         }
-        @keyframes glowPulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.4); border-color: cyan; }
-            70% { box-shadow: 0 0 0 12px rgba(0, 255, 255, 0); border-color: white; }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); border-color: cyan; }
+        @keyframes breatheSoft {
+            0% { opacity: 0.7; text-shadow: 0 0 0px #ffe4b5; }
+            100% { opacity: 1; text-shadow: 0 0 3px #ffdfb0; }
         }
-        /* 新增功能样式 */
-        .action-buttons {
-            margin-top: 15px;
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0f0c;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cfb87c;
+            border-radius: 10px;
+        }
+        @media (max-width: 800px) {
+            .container { padding: 1.2rem; }
+            .neon-title { font-size: 2rem; }
+        }
+
+        .sacred-music-core {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 999;
+            backdrop-filter: blur(16px);
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(230, 200, 120, 0.5);
+            border-radius: 48px;
+            padding: 10px 18px;
             display: flex;
-            gap: 10px;
-            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 12px rgba(220, 190, 100, 0.2);
+            font-family: 'Inter', sans-serif;
         }
-        .small-btn {
-            background: rgba(0, 255, 255, 0.05);
-            border: 1px solid #0ff;
-            color: #0ff;
-            padding: 5px 12px;
-            font-size: 0.8rem;
-            border-radius: 20px;
+        .sacred-music-core:hover {
+            border-color: #e6cfa0;
+            box-shadow: 0 0 18px rgba(230, 200, 100, 0.3);
+            background: rgba(0, 0, 0, 0.8);
+        }
+        .music-btn {
+            background: rgba(230, 210, 150, 0.2);
+            border: none;
+            color: #f7e9cf;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: 0.2s;
         }
-        .small-btn:hover {
-            background: #0ff;
-            color: #0a0f1e;
+        .music-btn:hover {
+            background: #e6cfa0;
+            color: #0a0702;
+            transform: scale(1.05);
+            box-shadow: 0 0 12px #f5e2b0;
         }
-        .blessing-text {
-            font-size: 0.9rem;
-            color: #ffd966;
-            margin-top: 10px;
-            font-style: italic;
+        .music-volume-slider {
+            width: 70px;
+            height: 3px;
+            -webkit-appearance: none;
+            background: #4a3e2a;
+            border-radius: 4px;
+            outline: none;
         }
-        .history-panel {
-            margin-top: 2rem;
-            max-height: 300px;
-            overflow-y: auto;
+        .music-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f7e2b0;
+            cursor: pointer;
+            box-shadow: 0 0 4px #ffefc0;
         }
-        .history-item {
-            background: rgba(0,0,0,0.3);
-            border-left: 3px solid cyan;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            font-size: 0.85rem;
+        .music-label {
+            font-size: 0.7rem;
+            color: #e6cf9a;
+            letter-spacing: 1px;
+            font-weight: 400;
+            background: rgba(0,0,0,0.5);
+            padding: 4px 10px;
+            border-radius: 60px;
         }
-        .clear-history {
-            margin-bottom: 10px;
-            text-align: right;
+        .upload-music-icon {
+            background: none;
+            border: none;
+            color: #ddc99e;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 5px;
+            border-radius: 50%;
+        }
+        .upload-music-icon:hover {
+            color: #fff0ce;
+            text-shadow: 0 0 6px #eac584;
+        }
+        .music-status {
+            font-size: 0.7rem;
+            color: #e6cfa0;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 650px) {
+            .sacred-music-core { padding: 6px 12px; gap: 8px; bottom: 15px; right: 15px; }
+            .music-label { display: none; }
+            .music-status { max-width: 100px; font-size: 0.65rem; }
+            .music-volume-slider { width: 55px; }
+        }
+        /* 自动播放提示浮层 */
+        .autoplay-hint {
+            position: fixed;
+            bottom: 90px;
+            right: 30px;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            border-left: 3px solid #e6cfa0;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            color: #f7e5c2;
+            z-index: 1000;
+            pointer-events: none;
+            transition: opacity 1s;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="neon-title">⚡ 圣物生成体系 ⚡</h1>
-    <p style="text-align: center; color: #aaccff;">✨ 赛博灵脉 · 定义您的守护圣物 ✨</p>
+    <h1 class="neon-title">✦ 圣迹穹仪 ✦</h1>
+    <p style="text-align: center; color: #dfd5be; letter-spacing: 1px; font-style: italic;">圣仪昭昭 · 圣音潺潺</p>
 
     <div class="row">
-        <!-- 左侧：赛博护身符 -->
         <div class="col">
             <div class="cyber-card">
-                <h2><i class="fas fa-shield-alt"></i> 赛博护身符</h2>
-                <p>点击生成属于你的电子守护印记</p>
-                <button id="genAmulet" class="cyber-btn"><i class="fas fa-bolt"></i> 生成护身符</button>
-                <div id="amuletResult" class="artifact-display" style="display: none;">
-                    <div class="icon-big" id="amuletIcon">🛡️</div>
-                    <h3 id="amuletName">--</h3>
-                    <p id="amuletDesc">点击上方按钮，获得赛博祝福</p>
-                    <div id="amuletBlessing" class="blessing-text"></div>
-                    <div class="action-buttons">
-                        <button class="small-btn copy-amulet"><i class="fas fa-copy"></i> 复制</button>
-                        <button class="small-btn clear-amulet"><i class="fas fa-trash-alt"></i> 清空</button>
+                <h2 class="breathing-text" style="font-weight: 500;"><i class="fas fa-feather-alt"></i> 圣铭护符</h2>
+                <p>天佑之印</p>
+                <button id="genAmulet" class="sacred-btn"><i class="fas fa-dove"></i> 祈铸圣符</button>
+                <div id="amuletResult" class="relic-display" style="display: none;">
+                    <div class="icon-bless" id="amuletIcon">🕊️</div>
+                    <h3 id="amuletName" style="color: #faf0db;">--</h3>
+                    <p id="amuletDesc" style="color: #dddddd;">圣言未显</p>
+                    <div id="amuletBlessing" class="blessing-text" style="color:#f3e2bc;"></div>
+                    <div class="action-buttons" style="display:flex; gap:8px; justify-content:center; margin-top:12px;">
+                        <button class="small-sacred-btn copy-amulet"><i class="fas fa-copy"></i> 铭录</button>
+                        <button class="small-sacred-btn clear-amulet"><i class="fas fa-trash-alt"></i> 净空</button>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- 右侧：个人守护神 -->
         <div class="col">
             <div class="cyber-card">
-                <h2><i class="fas fa-ghost"></i> 个人守护神</h2>
-                <p>输入您的真名（可选），召唤专属神灵</p>
-                <input type="text" id="userName" class="cyber-input" placeholder="例：虚空行者 / 留空则随机">
-                <button id="summonGuardian" class="cyber-btn" style="margin-top: 15px;"><i class="fas fa-magic"></i> 召唤守护神</button>
+                <h2 class="breathing-text"><i class="fas fa-moon"></i> 灵契守护</h2>
+                <p>神识降临</p>
+                <input type="text" id="userName" class="sacred-input" placeholder="奉上尊名 / 默然则天选">
+                <button id="summonGuardian" class="sacred-btn" style="margin-top: 15px;"><i class="fas fa-star-of-life"></i> 祈请守护灵</button>
                 <div id="guardianResult" class="guardian-display" style="display: none;">
-                    <div class="guardian-avatar" id="guardianAvatar">👾</div>
-                    <h3 id="guardianName">---</h3>
-                    <p id="guardianAttr">属性：待召唤</p>
-                    <div class="power-bar">
-                        <div class="power-fill" id="guardianPowerFill"></div>
+                    <div class="guardian-avatar" id="guardianAvatar">🌙</div>
+                    <h3 id="guardianName" style="color:#f6eedb;">---</h3>
+                    <p id="guardianAttr">圣性 · 未显化</p>
+                    <div class="power-bar" style="background:#2f2a1f; border-radius:20px; height:8px;">
+                        <div class="power-fill" id="guardianPowerFill" style="width:0%; background: linear-gradient(90deg, #f3da9b, #cfb163); border-radius:20px;"></div>
                     </div>
-                    <p id="guardianPowerText">灵力值：0%</p>
+                    <p id="guardianPowerText">灵光值：0%</p>
                     <div class="action-buttons">
-                        <button class="small-btn copy-guardian"><i class="fas fa-copy"></i> 复制</button>
-                        <button class="small-btn clear-guardian"><i class="fas fa-trash-alt"></i> 清空</button>
+                        <button class="small-sacred-btn copy-guardian"><i class="fas fa-copy"></i> 铭录</button>
+                        <button class="small-sacred-btn clear-guardian"><i class="fas fa-trash-alt"></i> 净空</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 赛博圣物画廊 -->
-    <div class="cyber-card" style="margin-top: 2rem;">
-        <h2><i class="fas fa-images"></i> 赛博圣物画廊 · 灵视投影</h2>
-        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
-            <div class="gallery-item">
-                <img src="{{ url_for('static', filename='images/artifact1.png') }}" alt="蜃海古鳞">
-                <p>⚡ 蜃海古鳞</p>
-            </div>
-            <div class="gallery-item">
-                <img src="{{ url_for('static', filename='images/artifact2.png') }}" alt="数据曼陀罗">
-                <p>🌀 数据曼陀罗</p>
-            </div>
-            <div class="gallery-item">
-                <img src="{{ url_for('static', filename='images/artifact3.png') }}" alt="月光核心">
-                <p>🌙 月光核心</p>
-            </div>
-            <div class="gallery-item">
-                <img src="{{ url_for('static', filename='images/artifact4.png') }}" alt="业火结晶">
-                <p>🔥 业火结晶</p>
+    <div class="row" style="margin-top: 0.5rem;">
+        <div class="col">
+            <div class="cyber-card grace-card" id="gracePanel">
+                <h2><i class="fas fa-hamsa grace-badge"></i> 圣光恩典 · 天赐殊荣</h2>
+                <div id="graceStatusBox" style="margin: 12px 0;">
+                    <span id="graceLabel" style="background:#1e1b14; padding:4px 16px; border-radius:40px; color:#e9cf9a;">🌿 虔心修士</span>
+                    <span style="margin-left: 12px; font-size:0.85rem; color:#ddcaa3;" id="graceBenefitHint">领受恩典后，融合之器将凝聚圣徽，灵光永驻</span>
+                </div>
+                <a href="https://www.checkout-ds24.com/product/691603"
+                    target="_blank"
+                    id="activateGraceBtn"
+                    class="sacred-btn"
+                    style="background: rgba(215, 180, 100, 0.18); border-color:#ebcf93; color:#fbeab9; text-decoration: none; display: inline-block;">
+                    <i class="fas fa-feather"></i> 领受圣光恩典
+                </a>
+                <div style="margin-top: 20px; background: rgba(210, 180, 100, 0.08); border-radius: 1rem; padding: 12px;">
+                    <p><i class="fas fa-spa" style="color:#eace9b;"></i> <strong>恩典圣约</strong></p>
+                    <ul style="margin-left: 1.2rem; font-size: 0.85rem; line-height: 1.5; color:#e1d0aa;">
+                        <li>✨ 融合圣物将获得「圣徽·不朽」印记与额外祷言</li>
+                        <li>✨ 融合结果自带圣光纹章，灵力显化超凡</li>
+                        <li>✨ 圣物灵签簿中留下金色圣痕记录</li>
+                        <li>✨ 恩典庇佑，圣物生成概率得灵光偏袒 (祥瑞)</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div style="background: rgba(0,255,255,0.1); border-radius: 16px; padding: 15px; margin-top: 25px;">
-            <p style="color: #ccf; line-height: 1.5;">
+        <div class="col">
+            <div class="cyber-card" style="border-color: #cfb87c;">
+                <h2 class="breathing-text"><i class="fas fa-hand-sparkles"></i> 圣物融合工坊 · 灵性共鸣</h2>
+                <p>将【圣铭护符】与【灵契守护】之力交融，诞生圣迹</p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 12px 0;">
+                    <div><i class="fas fa-feather-alt"></i> 当前护符: <strong id="currentAmuletPreview" style="color:#f5e2be;">未生成</strong></div>
+                    <div><i class="fas fa-moon"></i> 当前守护: <strong id="currentGuardianPreview" style="color:#f5e2be;">未祈请</strong></div>
+                </div>
+                <button id="fusionBtn" class="sacred-btn" style="background: rgba(190, 160, 100, 0.15); border-color:#dec27a;"><i class="fas fa-feather-alt"></i> 圣仪 · 融合圣物</button>
+                <div id="fusionOutput" class="fusion-result" style="display: none;">
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <i id="fusionIcon" class="fas fa-dove" style="font-size: 2.5rem; color: #f3ddb0;"></i>
+                        <div><strong id="fusionName" style="color:#f6ebd0;">融合圣物</strong><br><span id="fusionDesc" style="font-size:0.8rem;"></span></div>
+                        <span id="fusionGracebadge" style="margin-left:auto; background:#cfa668; color:#231f12; padding:2px 10px; border-radius:30px; font-size:0.7rem; font-weight:500;"></span>
+                    </div>
+                    <div style="margin-top: 10px;"><button class="small-sacred-btn" id="copyFusionBtn"><i class="fas fa-copy"></i> 铭录圣物祷文</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cyber-card" style="margin-top: 1.5rem;">
+        <h2><i class="fas fa-landmark"></i> 圣迹画廊 · 灵视投影</h2>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+            <div class="gallery-item"><img src="{{ url_for('static', filename='images/artifact1.png') }}" alt="蜃海古鳞" onerror="this.src='https://placehold.co/100x100/222/dec27a?text=🕊️'"><p>✦ 蜃海圣鳞</p></div>
+            <div class="gallery-item"><img src="{{ url_for('static', filename='images/artifact2.png') }}" alt="数据曼陀罗" onerror="this.src='https://placehold.co/100x100/222/dec27a?text=🌀'"><p>✦ 净识曼陀罗</p></div>
+            <div class="gallery-item"><img src="{{ url_for('static', filename='images/artifact3.png') }}" alt="月光核心" onerror="this.src='https://placehold.co/100x100/222/dec27a?text=🌙'"><p>✦ 月华灵核</p></div>
+            <div class="gallery-item"><img src="{{ url_for('static', filename='images/artifact4.png') }}" alt="业火结晶" onerror="this.src='https://placehold.co/100x100/222/dec27a?text=🕯️'"><p>✦ 净业圣晶</p></div>
+        </div>
+        <div style="background: rgba(0,0,0,0.45); border-radius: 1rem; padding: 16px; margin-top: 25px;">
+            <p style="color: #d6c9a3;">
                 1️⃣ 上古蜃兽褪落鳞甲，躯形如龙而非龙族，藏沧海玄秘之气，隐命格、镇邪祟，隔绝世间虚妄灾劫。<br>
                 2️⃣ 幽谷玄华凝结花印，解宿世执念纠缠，涤荡心间妄念尘缘，安魂定魄，心神澄澈不染纷扰。<br>
                 3️⃣ 凝万古清宵月华灵核，蕴夜色至柔清气，温养神魂，驱散阴寒邪祟，以月华日夜护身庇佑。<br>
@@ -295,232 +493,358 @@
         </div>
     </div>
 
-    <!-- 历史记录面板 -->
-    <div class="cyber-card" style="margin-top: 2rem;">
-        <h2><i class="fas fa-history"></i> 圣物灵签簿 · 最近记录</h2>
-        <div class="clear-history">
-            <button id="clearAllHistory" class="small-btn"><i class="fas fa-eraser"></i> 清空全部</button>
-        </div>
-        <div id="historyList" class="history-panel">
-            <p style="color: #888; text-align: center;">暂无圣物记录，生成护身符或守护神后自动保存。</p>
-        </div>
+    <div class="cyber-card" style="margin-top: 1.8rem;">
+        <h2><i class="fas fa-scroll"></i> 圣物灵签簿 · 因果圣录</h2>
+        <div class="clear-history" style="text-align: right;"><button id="clearAllHistory" class="small-sacred-btn"><i class="fas fa-eraser"></i> 净册</button></div>
+        <div id="historyList" class="history-panel"><p style="color:#a29679;">尚无圣迹，生成护符或祈请守护后自现灵签。</p></div>
     </div>
+    <div class="back-link" style="text-align: center; margin-top: 2rem;"><a href="#" style="color:#dfca9a;"><i class="fas fa-arrow-left"></i> 归返圣殿 · 恒久祈愿</a></div>
+    <a href="/shrine" class="back">← 返回神宮</a>
+<style>
+.back {
+  display: block;
+  text-align: center;
+}
 
-    <div class="back-link">
-        <a href="{{ url_for('shrine') }}"><i class="fas fa-arrow-left"></i> 返回神宫 · 继续祈愿</a>
-    </div>
+.back:hover {
+  color: #dfca9a;
+}
+</style>
 </div>
 
+<!-- 圣咏音枢：使用文件夹内在 music/sacred_bgm.mp3，并尝试自动播放 -->
+<div class="sacred-music-core" id="sacredMusicPlayer">
+    <button class="music-btn" id="playPauseMusicBtn" title="圣咏启奏 / 暂休"><i id="musicPlayIcon" class="fas fa-play"></i></button>
+    <input type="range" id="musicVolumeSlider" class="music-volume-slider" min="0" max="1" step="0.01" value="0.4">
+    <i class="fas fa-volume-up" style="color:#e7d2a3; font-size:0.85rem;"></i>
+    <label class="upload-music-icon" title="后备：上传自定圣音 (无需手动上传则忽略)"><i class="fas fa-cloud-upload-alt"></i><input type="file" id="uploadMusicInput" accept="audio/*" style="display: none;"></label>
+    <span class="music-label">圣咏缭绕</span>
+    <span class="music-status" id="musicStatusText">圣音加载中...</span>
+</div>
+<audio id="backgroundMusic" loop preload="auto" crossorigin="anonymous"></audio>
+<div id="autoPlayHint" class="autoplay-hint" style="opacity:0;">✨ 点击任意处 圣音自来 ✨</div>
+
 <script>
-    // ---------- 赛博护身符数据 ----------
+    // ========== 圣物数据 (保持完整功能) ==========
     const amulets = [
-        { icon: "🛡️", name: "量子护盾", desc: "吸收负面数据流，反弹网络恶意攻击。" },
-        { icon: "⚡", name: "雷纹芯片", desc: "提升直觉反应速度，超频思维回路。" },
-        { icon: "🐉", name: "电子龙鳞", desc: "古老龙魂与0和1的契约，防御+30%。" },
-        { icon: "🔮", name: "预言水晶", desc: "每周一次随机揭示未来事件碎片。" },
-        { icon: "🌿", name: "纳米灵芝", desc: "缓慢修复精神疲劳，延长专注时间。" },
-        { icon: "🔥", name: "业火数据包", desc: "清除情绪缓存，重置焦虑进程。" },
-        { icon: "💎", name: "以太谐振器", desc: "增强与宇宙意识的蓝牙连接。" },
-        { icon: "📡", name: "灵脉天线", desc: "捕捉游离的灵感电波。" }
+        { icon: "🕊️", name: "圣言护印", desc: "护守灵意，隔绝诸般不善侵扰。" },
+        { icon: "✨", name: "辰星垂露", desc: "夜光所凝，启迪灵思，福至心灵。" },
+        { icon: "🐉", name: "龙华圣鳞", desc: "上古龙息结晶，镇守气运，辟邪消灾。" },
+        { icon: "🔮", name: "先见水晶", desc: "映照命理之机，昭示未来吉光片羽。" },
+        { icon: "🌾", name: "金穗灵芝", desc: "养神固元，持守心念澄澈。" },
+        { icon: "🕯️", name: "净业烛火", desc: "焚烧忧患尘滓，清明心台。" },
+        { icon: "❄️", name: "霜月圣杯", desc: "凝聚太阴清气，护持灵体安宁。" },
+        { icon: "📿", name: "愿念珠链", desc: "承载善愿，念念回响。" }
     ];
+    const blessings = ["奉天承运 · 百厄不侵", "圣光永驻 · 心神俱净", "灵台清明 · 诸愿成就", "月华涤魄 · 夜梦安详", "业火焚罪 · 万象更新", "先机照见 · 慧心常明", "祥瑞缠身 · 福泽绵长", "大道和合 · 圣佑长存"];
 
-    // 随机祝福语库
-    const blessings = [
-        "✨ 愿你前路无阻，代码无bug ✨",
-        "🌀 赛博灵光护体，诸邪不侵 🌀",
-        "⚡ 思维超频，灵感迸发 ⚡",
-        "🌙 月华涤心，梦境安宁 🌙",
-        "🔥 业火焚厄，万象更新 🔥",
-        "🔮 预见未来，掌握当下 🔮",
-        "💎 以太共鸣，心想事成 💎",
-        "🛡️ 灾劫反射，平安永驻 🛡️"
-    ];
+    const guardianNames = ["夜明使", "云枢尊者", "净业护法", "记忆灵母", "藏识地藏", "明光护尊", "虚空鲸灵", "晨光天女"];
+    const attributes = [{ name:"辉光", powerBase:70 },{ name:"暗净", powerBase:65 },{ name:"雷音", powerBase:85 },{ name:"冰心", powerBase:60 },{ name:"炎净", powerBase:80 },{ name:"灵愈", powerBase:55 }];
+    const avatarIcons = ["🕊️", "🦉", "🐉", "🌊", "⭐", "🌙", "✨", "🌸"];
 
-    // 历史记录存储key
-    const STORAGE_KEY = 'cyber_relic_history';
+    let currentAmulet = null;
+    let currentGuardian = { name: null, attr: null, power: null, icon: null, fullName: null };
+    let isGrace = false;
     let history = [];
+    const STORAGE_KEY = 'sacred_relic_history';
+    const GRACE_KEY = 'sacred_grace_status';
 
-    // 加载历史记录
+    function getRandomBlessing() { return blessings[Math.floor(Math.random() * blessings.length)]; }
+
     function loadHistory() {
         const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            history = JSON.parse(stored);
-        } else {
-            history = [];
-        }
+        history = stored ? JSON.parse(stored) : [];
         renderHistory();
     }
-
-    // 保存历史记录
-    function saveHistory() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-        renderHistory();
-    }
-
-    // 添加一条历史记录
-    function addHistoryItem(type, name, detail) {
-        const item = {
-            type: type, // 'amulet' 或 'guardian'
-            name: name,
-            detail: detail,
-            timestamp: new Date().toLocaleString()
-        };
-        history.unshift(item); // 最新在上
-        if (history.length > 20) history.pop(); // 最多保留20条
+    function saveHistory() { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); renderHistory(); }
+    function addHistoryItem(type, name, detail, isGraceEnhanced = false) {
+        const item = { type, name, detail, timestamp: new Date().toLocaleString(), grace: isGraceEnhanced };
+        history.unshift(item);
+        if(history.length > 25) history.pop();
         saveHistory();
     }
-
-    // 渲染历史面板
     function renderHistory() {
         const container = document.getElementById('historyList');
-        if (!container) return;
-        if (history.length === 0) {
-            container.innerHTML = '<p style="color: #888; text-align: center;">暂无圣物记录，生成护身符或守护神后自动保存。</p>';
-            return;
-        }
-        let html = '';
-        for (let item of history) {
-            const icon = item.type === 'amulet' ? '🛡️' : '👾';
-            html += `<div class="history-item">
-                        <strong>${icon} ${item.type === 'amulet' ? '护身符' : '守护神'}</strong> · ${item.name}<br>
-                        <small>${item.detail}</small><br>
-                        <span style="color: #6c8db0; font-size: 0.7rem;">${item.timestamp}</span>
-                     </div>`;
-        }
-        container.innerHTML = html;
+        if(!container) return;
+        if(history.length===0){ container.innerHTML='<p style="color:#b7a77a;">暂无圣迹，祈铸护符或祈请守护后自现灵签。</p>'; return;}
+        let html='';
+        history.forEach(item=>{
+            const graceTag = item.grace ? '<span style="background:#ddc07e; color:#1f1b10; border-radius:20px; padding:0 8px; margin-left:8px; font-size:10px;">恩典圣迹</span>' : '';
+            html+=`<div class="history-item"><strong>${item.type==='amulet'?'🕊️ 圣铭护符':'🌙 灵契守护'}${item.type==='fusion'?' ✦ 融合圣物 ✦':''}</strong> · ${item.name} ${graceTag}<br><small>${item.detail.substring(0,120)}</small><br><span style="color:#b7a77a;">${item.timestamp}</span></div>`;
+        });
+        container.innerHTML=html;
     }
 
-    // 清空全部历史
-    document.getElementById('clearAllHistory')?.addEventListener('click', () => {
-        if (confirm('确定要清空所有圣物记录吗？')) {
-            history = [];
-            saveHistory();
+    function loadGraceStatus() {
+        const stored = localStorage.getItem(GRACE_KEY);
+        isGrace = stored === 'true';
+        updateGraceUI();
+    }
+    function updateGraceUI() {
+        const labelSpan = document.getElementById('graceLabel');
+        const hintSpan = document.getElementById('graceBenefitHint');
+        if(isGrace) {
+            labelSpan.innerHTML = '✦ 圣光恩典 · 蒙眷者 ✦';
+            labelSpan.style.background = "#b9893f";
+            labelSpan.style.color = "#1f1b10";
+            hintSpan.innerHTML = '恩典已赐 · 融合圣物将显圣徽印记，灵光永恒护持。';
+        } else {
+            labelSpan.innerHTML = '🌿 虔心修士';
+            labelSpan.style.background = "#1e1b14";
+            labelSpan.style.color = "#e9cf9a";
+            hintSpan.innerHTML = '领受恩典后，融合之器将凝聚圣徽，灵光永驻';
         }
-    });
-
-    // 获取随机祝福
-    function getRandomBlessing() {
-        return blessings[Math.floor(Math.random() * blessings.length)];
+    }
+    function activateGrace() {
+        isGrace = true;
+        localStorage.setItem(GRACE_KEY, 'true');
+        updateGraceUI();
+        alert("✨ 圣光恩典已降临 ✨\n您已蒙受殊佑，融合圣物时将显化圣徽印记。");
     }
 
-    // 显示护身符结果
     function displayAmulet(amulet) {
+        currentAmulet = amulet;
         const blessing = getRandomBlessing();
         document.getElementById('amuletIcon').innerHTML = amulet.icon;
         document.getElementById('amuletName').innerText = amulet.name;
         document.getElementById('amuletDesc').innerHTML = amulet.desc;
-        document.getElementById('amuletBlessing').innerHTML = `✨ 赛博祝福：${blessing} ✨`;
+        document.getElementById('amuletBlessing').innerHTML = `✨ 圣言灵祝：${blessing} ✨`;
         document.getElementById('amuletResult').style.display = 'block';
-        // 动画
-        const resultDiv = document.getElementById('amuletResult');
-        resultDiv.style.animation = 'none';
-        setTimeout(() => resultDiv.style.animation = 'glowPulse 0.6s', 10);
-        // 保存历史
-        addHistoryItem('amulet', amulet.name, `${amulet.desc} 祝福：${blessing}`);
+        addHistoryItem('amulet', amulet.name, `${amulet.desc} 圣祝：${blessing}`, false);
+        updateFusionPreview();
     }
-
-    // 生成护身符
-    document.getElementById('genAmulet').addEventListener('click', () => {
-        const random = amulets[Math.floor(Math.random() * amulets.length)];
-        displayAmulet(random);
-    });
-
-    // 清空腹身符显示
-    function clearAmuletDisplay() {
-        const resultDiv = document.getElementById('amuletResult');
-        if (resultDiv) resultDiv.style.display = 'none';
-        // 不清除历史，只清界面
-    }
-
-    // 复制护身符内容
+    function clearAmuletDisplay() { document.getElementById('amuletResult').style.display = 'none'; currentAmulet = null; updateFusionPreview(); }
     function copyAmuletContent() {
         const name = document.getElementById('amuletName').innerText;
         const desc = document.getElementById('amuletDesc').innerHTML;
-        const blessing = document.getElementById('amuletBlessing').innerHTML;
-        const text = `【圣物生成体系】护身符：${name}\n描述：${desc}\n${blessing}`;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('护身符信息已复制到剪贴板！');
-        }).catch(() => alert('复制失败，请手动复制'));
+        const bless = document.getElementById('amuletBlessing').innerHTML;
+        navigator.clipboard.writeText(`【圣铭护符】${name}\n圣载：${desc}\n${bless}`);
+        alert("圣言已铭录。");
     }
 
-    // 清空守护神显示
-    function clearGuardianDisplay() {
-        const resultDiv = document.getElementById('guardianResult');
-        if (resultDiv) resultDiv.style.display = 'none';
+    function summonGuardianLogic() {
+        let userName = document.getElementById('userName').value.trim();
+        if(userName === "") userName = "虔心者";
+        const randName = guardianNames[Math.floor(Math.random() * guardianNames.length)];
+        const randAttr = attributes[Math.floor(Math.random() * attributes.length)];
+        const randIcon = avatarIcons[Math.floor(Math.random() * avatarIcons.length)];
+        let power = randAttr.powerBase + Math.floor(Math.random() * 21);
+        power = Math.min(99, power);
+        const guardianFull = `${randName} · 守护 ${userName}`;
+        currentGuardian = { name: randName, attr: randAttr.name, power: power, icon: randIcon, fullName: guardianFull, userName };
+        document.getElementById('guardianAvatar').innerHTML = randIcon;
+        document.getElementById('guardianName').innerHTML = guardianFull;
+        document.getElementById('guardianAttr').innerHTML = `圣性 · ${randAttr.name} | 灵光波动 ${power}`;
+        document.getElementById('guardianPowerFill').style.width = power+'%';
+        document.getElementById('guardianPowerText').innerHTML = `灵光值：${power}%`;
+        document.getElementById('guardianResult').style.display = 'block';
+        addHistoryItem('guardian', guardianFull, `圣性：${randAttr.name} 灵压${power}`, false);
+        updateFusionPreview();
     }
-
-    // 复制守护神内容
+    function clearGuardianDisplay() { document.getElementById('guardianResult').style.display = 'none'; currentGuardian = null; updateFusionPreview(); }
     function copyGuardianContent() {
         const name = document.getElementById('guardianName').innerText;
         const attr = document.getElementById('guardianAttr').innerText;
         const power = document.getElementById('guardianPowerText').innerText;
-        const text = `【圣物生成体系】守护神：${name}\n${attr}\n${power}`;
-        navigator.clipboard.writeText(text).then(() => {
-            alert('守护神信息已复制到剪贴板！');
-        }).catch(() => alert('复制失败，请手动复制'));
+        navigator.clipboard.writeText(`【灵契守护】${name}\n${attr}\n${power}`);
+        alert("圣约已铭录。");
     }
 
-    // 个人守护神数据
-    const guardianNames = [
-        "玄鸮・夜视者", "青麟・云枢使", "赤瞳・业火判官", "银冕・记忆编织者",
-        "琥珀・数据地藏", "紫电・雷公AI", "苍渊・虚空鲸", "金曦・晨光精灵"
-    ];
-    const attributes = [
-        { name: "光曜", color: "#FFD966", powerBase: 70 },
-        { name: "暗蚀", color: "#B266FF", powerBase: 65 },
-        { name: "雷亟", color: "#00FFFF", powerBase: 85 },
-        { name: "冰心", color: "#88AAFF", powerBase: 60 },
-        { name: "炎魄", color: "#FF7A45", powerBase: 80 },
-        { name: "灵愈", color: "#66FF99", powerBase: 55 }
-    ];
-    const avatarIcons = ["🐉", "🦉", "🐺", "🗿", "🌊", "⚙️", "👁️", "🌀"];
+    function updateFusionPreview() {
+        const amuName = currentAmulet ? currentAmulet.name : '未祈铸';
+        const guardName = currentGuardian && currentGuardian.fullName ? currentGuardian.fullName : '未祈请';
+        document.getElementById('currentAmuletPreview').innerText = amuName;
+        document.getElementById('currentGuardianPreview').innerText = guardName;
+    }
 
-    // 召唤守护神
-    document.getElementById('summonGuardian').addEventListener('click', () => {
-        let userName = document.getElementById('userName').value.trim();
-        if (userName === "") userName = "迷途旅人";
-        const randName = guardianNames[Math.floor(Math.random() * guardianNames.length)];
-        const randAttr = attributes[Math.floor(Math.random() * attributes.length)];
-        const randIcon = avatarIcons[Math.floor(Math.random() * avatarIcons.length)];
-        let power = randAttr.powerBase + Math.floor(Math.random() * 20);
-        power = Math.min(99, power);
-        const guardianDetail = `属性：${randAttr.name} | 灵力波动 ${power}`;
-        document.getElementById('guardianAvatar').innerHTML = randIcon;
-        document.getElementById('guardianName').innerHTML = `${randName} · 守护 ${userName}`;
-        document.getElementById('guardianAttr').innerHTML = guardianDetail;
-        document.getElementById('guardianPowerFill').style.width = power + '%';
-        document.getElementById('guardianPowerText').innerHTML = `灵力值：${power}%`;
-        document.getElementById('guardianResult').style.display = 'block';
+    function performFusion() {
+        if(!currentAmulet && !currentGuardian) { alert("须先祈铸圣符或祈请守护，方可举行圣仪。"); return; }
+        if(!currentAmulet) { alert("需有圣铭护符之灵韵。"); return; }
+        if(!currentGuardian) { alert("需有灵契守护之圣约。"); return; }
 
-        // 保存历史
-        const guardianFullName = `${randName} · 守护 ${userName}`;
-        addHistoryItem('guardian', guardianFullName, `${guardianDetail}`);
-    });
+        let baseName = `${currentAmulet.name} · ${currentGuardian.name}`;
+        let fusionDesc = `融合「${currentAmulet.desc}」与「${currentGuardian.attr}圣性」，灵迹显现，圣意垂护。`;
+        if(isGrace) {
+            baseName = `✦ 圣徽 · ${currentAmulet.name} ✦ ${currentGuardian.name} ✦`;
+            fusionDesc = `[恩典圣仪] ${currentAmulet.desc} 与 ${currentGuardian.attr} 神力交融，凝结圣徽不朽之印，灵光彻照，诸愿成就。`;
+        }
+        const extraBless = getRandomBlessing();
+        fusionDesc = fusionDesc + " " + extraBless + (isGrace ? " 永恒庇佑。" : " 虔心显化。");
+        document.getElementById('fusionIcon').innerHTML = currentAmulet.icon + (isGrace ? " ✦" : "");
+        document.getElementById('fusionName').innerHTML = baseName;
+        document.getElementById('fusionDesc').innerHTML = fusionDesc;
+        const badgeSpan = document.getElementById('fusionGracebadge');
+        if(isGrace) {
+            badgeSpan.innerHTML = "✦ 圣光恩典印记 ✦";
+            badgeSpan.style.background = "#e1ba75";
+            badgeSpan.style.color = "#1e1a10";
+        } else {
+            badgeSpan.innerHTML = "虔心融合";
+            badgeSpan.style.background = "#3a321f";
+            badgeSpan.style.color = "#e9d0a0";
+        }
+        document.getElementById('fusionOutput').style.display = 'block';
+        addHistoryItem('fusion', baseName, fusionDesc.substring(0, 130), isGrace);
+    }
+    function copyFusion() {
+        const name = document.getElementById('fusionName').innerText;
+        const desc = document.getElementById('fusionDesc').innerText;
+        navigator.clipboard.writeText(`【融合圣物】${name}\n圣迹铭文：${desc}`);
+        alert("圣物祷文已铭录。");
+    }
 
-    // 绑定按钮事件（使用事件委托，因为动态添加？但这里按钮已存在，直接绑定即可）
-    document.querySelector('.copy-amulet')?.addEventListener('click', copyAmuletContent);
-    document.querySelector('.clear-amulet')?.addEventListener('click', clearAmuletDisplay);
-    document.querySelector('.copy-guardian')?.addEventListener('click', copyGuardianContent);
-    document.querySelector('.clear-guardian')?.addEventListener('click', clearGuardianDisplay);
+    // ----- 背景音乐：自动播放，使用文件夹内 ./music/sacred_bgm.mp3 -----
+    const audio = document.getElementById('backgroundMusic');
+    const playPauseBtn = document.getElementById('playPauseMusicBtn');
+    const playIcon = document.getElementById('musicPlayIcon');
+    const volumeSlider = document.getElementById('musicVolumeSlider');
+    const musicStatusSpan = document.getElementById('musicStatusText');
+    const uploadInput = document.getElementById('uploadMusicInput');
+    const autoHint = document.getElementById('autoPlayHint');
 
-    // 注意：由于复制和清空按钮是后来才添加到DOM的，但上面querySelector可能在页面加载时就已经获取了。为确保安全，可以在DOM加载后再绑定。
-    // 但更可靠的是在每次生成时重新绑定，或者直接用id。为简单起见，为这些按钮添加id。
-    // 改进：为按钮添加独立id，避免冲突。
-    // 直接在HTML中修改？但当前HTML没有id。改用动态查询并在load时绑定。
+    const LOCAL_MUSIC_PATH = "static/空山寂寂.mp3";
+    let isPlaying = false;
+    let autoPlayFailed = false;
+
+    function setMusicStatus(text, isError = false) {
+        musicStatusSpan.innerHTML = text;
+        musicStatusSpan.style.color = isError ? "#e6b88a" : "#e6cf9a";
+    }
+
+    function loadLocalMusic() {
+        audio.src = LOCAL_MUSIC_PATH;
+        audio.loop = true;
+        audio.volume = volumeSlider.value;
+        audio.load();
+        audio.onerror = () => {
+            if(!audio.src || audio.error) {
+                setMusicStatus("未找到本地音乐 (./music/sacred_bgm.mp3)", true);
+            }
+        };
+        audio.oncanplaythrough = () => {
+            if(audio.src && !audio.error) setMusicStatus("圣咏已备 · 自动播放中");
+        };
+    }
+
+    // 核心自动播放逻辑
+    function attemptAutoPlay() {
+        if (!audio.src || audio.src === "") loadLocalMusic();
+        audio.play().then(() => {
+            // 自动播放成功
+            isPlaying = true;
+            playIcon.className = "fas fa-pause";
+            setMusicStatus("圣音缭绕 · 灵境净土");
+            autoHint.style.opacity = "0";
+        }).catch(err => {
+            console.warn("自动播放被浏览器阻止，等待用户交互", err);
+            autoPlayFailed = true;
+            setMusicStatus("点击圣咏按钮或页面任意处播放", true);
+            // 显示提示浮层
+            autoHint.style.opacity = "1";
+            autoHint.style.transition = "opacity 0.8s";
+            // 5秒后淡隐
+            setTimeout(() => { if(autoHint.style.opacity === "1") autoHint.style.opacity = "0.5"; }, 5000);
+            // 绑定一次全局点击来激活播放
+            const oneClickPlay = () => {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    playIcon.className = "fas fa-pause";
+                    setMusicStatus("圣音缭绕 · 灵境净土");
+                    autoHint.style.opacity = "0";
+                    document.removeEventListener('click', oneClickPlay);
+                    document.removeEventListener('touchstart', oneClickPlay);
+                }).catch(e => {});
+            };
+            document.addEventListener('click', oneClickPlay);
+            document.addEventListener('touchstart', oneClickPlay);
+        });
+    }
+
+    function togglePlayPause() {
+        if (isPlaying) {
+            audio.pause();
+            playIcon.className = "fas fa-play";
+            isPlaying = false;
+            setMusicStatus("圣咏暂歇");
+        } else {
+            audio.play().then(() => {
+                playIcon.className = "fas fa-pause";
+                isPlaying = true;
+                setMusicStatus("圣音缭绕 · 灵境净土");
+            }).catch(err => {
+                setMusicStatus("播放失败，可尝试上传音乐", true);
+            });
+        }
+    }
+
+    function updateVolume() { if(audio) audio.volume = volumeSlider.value; }
+    function handleAudioEnded() { if(isPlaying) setMusicStatus("圣音缭绕 · 灵境净土"); }
+
+    function uploadLocalMusic(e) {
+        const file = e.target.files[0];
+        if(file && file.type.includes('audio')) {
+            const wasPlaying = isPlaying;
+            if(wasPlaying) audio.pause();
+            const url = URL.createObjectURL(file);
+            audio.src = url;
+            audio.loop = true;
+            audio.volume = volumeSlider.value;
+            setMusicStatus(`圣咏·${file.name.substring(0, 18)}`);
+            if(wasPlaying) {
+                audio.play().then(()=>{
+                    playIcon.className = "fas fa-pause";
+                    isPlaying = true;
+                }).catch(()=>{
+                    playIcon.className = "fas fa-play";
+                    isPlaying = false;
+                });
+            } else {
+                playIcon.className = "fas fa-play";
+                isPlaying = false;
+            }
+        } else {
+            alert("请上传有效的音频文件 (MP3, WAV等)");
+        }
+        uploadInput.value = '';
+    }
+
+    // 页面启动
     window.addEventListener('DOMContentLoaded', () => {
-        // 重新绑定，确保元素存在
-        const copyAmuletBtn = document.querySelector('.copy-amulet');
-        const clearAmuletBtn = document.querySelector('.clear-amulet');
-        const copyGuardianBtn = document.querySelector('.copy-guardian');
-        const clearGuardianBtn = document.querySelector('.clear-guardian');
-        if (copyAmuletBtn) copyAmuletBtn.addEventListener('click', copyAmuletContent);
-        if (clearAmuletBtn) clearAmuletBtn.addEventListener('click', clearAmuletDisplay);
-        if (copyGuardianBtn) copyGuardianBtn.addEventListener('click', copyGuardianContent);
-        if (clearGuardianBtn) clearGuardianBtn.addEventListener('click', clearGuardianDisplay);
-    });
+        loadGraceStatus();
+        loadHistory();
+        document.querySelector('.copy-amulet')?.addEventListener('click', copyAmuletContent);
+        document.querySelector('.clear-amulet')?.addEventListener('click', clearAmuletDisplay);
+        document.querySelector('.copy-guardian')?.addEventListener('click', copyGuardianContent);
+        document.querySelector('.clear-guardian')?.addEventListener('click', clearGuardianDisplay);
+        document.getElementById('fusionBtn')?.addEventListener('click', performFusion);
+        document.getElementById('copyFusionBtn')?.addEventListener('click', copyFusion);
+        document.getElementById('genAmulet').addEventListener('click', () => {
+            const random = amulets[Math.floor(Math.random() * amulets.length)];
+            displayAmulet(random);
+        });
+        document.getElementById('summonGuardian').addEventListener('click', summonGuardianLogic);
+        document.getElementById('clearAllHistory')?.addEventListener('click', ()=>{
+            if(confirm('净空所有圣录签文？')) { history = []; saveHistory(); }
+        });
+        updateFusionPreview();
 
-    // 初始化历史记录
-    loadHistory();
+        // 音乐初始化并自动播放
+        loadLocalMusic();
+        // 等待音频元素加载完成后再尝试自动播放
+        audio.addEventListener('canplaythrough', () => {
+            attemptAutoPlay();
+        });
+        // 如果超时未触发canplaythrough，也尝试一次
+        setTimeout(() => {
+            if(!isPlaying && !autoPlayFailed) attemptAutoPlay();
+        }, 800);
+
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        volumeSlider.addEventListener('input', updateVolume);
+        audio.addEventListener('ended', handleAudioEnded);
+        document.querySelector('.upload-music-icon')?.addEventListener('click', () => uploadInput.click());
+        uploadInput.addEventListener('change', uploadLocalMusic);
+    });
 </script>
 </body>
 </html>

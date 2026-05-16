@@ -165,6 +165,35 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .makeup-checkin-button {
+            display: inline-block;
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            font-size: 1.2rem;
+            padding: 12px 40px;
+            text-decoration: none;
+            letter-spacing: 8px;
+            transition: all 0.3s ease;
+            animation: makeupButtonGlow 3s ease-in-out infinite;
+        }
+
+        .makeup-checkin-button:hover {
+            background: #FFD700;
+            color: #000000;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+        }
+
+        @keyframes makeupButtonGlow {
+            0%, 100% {
+                box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+        }
     </style>
 </head>
 <body>
@@ -186,6 +215,10 @@
         <button id="checkinBtn" class="checkin-button" {% if today_completed %}disabled{% endif %}>
             {% if today_completed %}今日已簽到{% else %}今日簽到{% endif %}
         </button>
+
+        <a href="https://www.checkout-ds24.com/product/691633" target="_blank" class="makeup-checkin-button">
+            補 打 卡
+        </a>
 
         <div class="nav-links">
             <a href="/daily-prayer" class="nav-link">每日祈願</a>

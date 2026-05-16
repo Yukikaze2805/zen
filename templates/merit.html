@@ -6,28 +6,181 @@
     <title>因果功德格 | Merit Karma</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
-        /* 基础样式保持不变 */
-        .karma-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background: rgba(0, 0, 0, 0.2); padding: 20px 0; }
+        html, body {
+            height: auto;
+            overflow-y: auto;
+        }
+        .karma-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; width: 100%; background: rgba(0, 0, 0, 0.2); padding: 20px 0; overflow-y: visible; height: auto; }
         .karma-container { text-align: center; background: rgba(15, 15, 15, 0.92); padding: 40px; border-radius: 30px; border: 1px solid #333; box-shadow: 0 0 60px rgba(0, 0, 0, 1); max-width: 500px; width: 90%; backdrop-filter: blur(15px); }
-        .merit-btn { background: transparent; color: #fff; border: 1px solid #fff; border-radius: 50%; width: 120px; height: 120px; font-size: 1rem; cursor: pointer; margin: 25px 0; transition: all 0.3s; }
-        .merit-btn:hover:not(:disabled) { box-shadow: 0 0 35px rgba(255, 255, 255, 0.4); transform: scale(1.05); }
-        .merit-btn:disabled { border-color: #444; color: #666; cursor: not-allowed; box-shadow: none; }
 
+        /* 基础按钮样式 */
+        .merit-btn {
+            background: transparent;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 25px 0;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.5); /* 半透明底，确保文字可读 */
+        }
+        .merit-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+        .merit-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            filter: grayscale(0.3);
+        }
+
+        /* 不同称号的常驻样式 */
+        .merit-btn.level-0 { /* 初见虚空 */
+            border: 2px solid #c0c0c0;
+            color: #c0c0c0;
+            box-shadow: 0 0 10px rgba(192,192,192,0.3);
+            text-shadow: 0 0 5px rgba(192,192,192,0.5);
+        }
+        .merit-btn.level-0:hover:not(:disabled) {
+            box-shadow: 0 0 25px rgba(192,192,192,0.6);
+        }
+
+        .merit-btn.level-1 { /* 明心见性 */
+            border: 2px solid #ffcc00;
+            color: #ffcc00;
+            box-shadow: 0 0 15px rgba(255,204,0,0.4);
+            text-shadow: 0 0 8px rgba(255,204,0,0.6);
+        }
+        .merit-btn.level-1:hover:not(:disabled) {
+            box-shadow: 0 0 35px rgba(255,204,0,0.8);
+        }
+
+        .merit-btn.level-2 { /* 赛博菩提 */
+            border: 2px solid #aa00ff;
+            color: #aa00ff;
+            box-shadow: 0 0 20px rgba(170,0,255,0.5);
+            text-shadow: 0 0 10px rgba(170,0,255,0.7);
+        }
+        .merit-btn.level-2:hover:not(:disabled) {
+            box-shadow: 0 0 45px rgba(170,0,255,0.9);
+        }
+
+        .merit-btn.level-3 { /* 万象圆满 - 彩虹流动光晕 + 文字渐变 */
+            border: 2px solid #fff;
+            background: transparent;
+            box-shadow: 0 0 20px rgba(255,0,200,0.6), 0 0 10px rgba(0,255,255,0.4);
+            animation: borderFlow 2s infinite alternate;
+            /* 文字渐变 */
+            background: linear-gradient(90deg, #ff00cc, #00ffcc, #ff00cc);
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-weight: bold;
+            text-shadow: none;
+            transition: none;
+        }
+        @keyframes borderFlow {
+            0% { box-shadow: 0 0 20px rgba(255,0,200,0.6), 0 0 10px rgba(0,255,255,0.4); border-color: #ff00cc; }
+            100% { box-shadow: 0 0 35px rgba(0,255,255,0.8), 0 0 15px rgba(255,0,200,0.6); border-color: #00ffcc; }
+        }
+        /* 文字渐变流动动画 */
+        .merit-btn.level-3 {
+            animation: borderFlow 2s infinite alternate, textFlow 3s linear infinite;
+        }
+        @keyframes textFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .merit-btn.level-3:hover:not(:disabled) {
+            box-shadow: 0 0 45px rgba(255,0,200,0.9), 0 0 25px rgba(0,255,255,0.7);
+            transform: scale(1.05);
+        }
+
+        /* 点击特效动画（不同称号，仅阴影和变形，不覆盖背景） */
+        @keyframes clickFlashLevel0 {
+            0% { box-shadow: 0 0 0 0 rgba(192,192,192,0.8); transform: scale(1); }
+            50% { box-shadow: 0 0 30px 20px rgba(192,192,192,0.5); transform: scale(1.1); }
+            100% { box-shadow: 0 0 0 0 rgba(192,192,192,0); transform: scale(1); }
+        }
+        @keyframes clickFlashLevel1 {
+            0% { box-shadow: 0 0 0 0 rgba(255,204,0,0.9); transform: scale(1); }
+            50% { box-shadow: 0 0 40px 25px rgba(255,204,0,0.6); transform: scale(1.12); }
+            100% { box-shadow: 0 0 0 0 rgba(255,204,0,0); transform: scale(1); }
+        }
+        @keyframes clickFlashLevel2 {
+            0% { box-shadow: 0 0 0 0 rgba(170,0,255,0.9); transform: scale(1); }
+            50% { box-shadow: 0 0 50px 30px rgba(170,0,255,0.6); transform: scale(1.15); }
+            100% { box-shadow: 0 0 0 0 rgba(170,0,255,0); transform: scale(1); }
+        }
+        @keyframes clickFlashLevel3 {
+            0% { box-shadow: 0 0 0 0 rgba(255,0,200,0.9); transform: scale(1); filter: hue-rotate(0deg); background-position: 0% 50%; }
+            50% { box-shadow: 0 0 60px 35px rgba(255,0,200,0.7); transform: scale(1.2); filter: hue-rotate(180deg); background-position: 100% 50%; }
+            100% { box-shadow: 0 0 0 0 rgba(255,0,200,0); transform: scale(1); filter: hue-rotate(360deg); background-position: 200% 50%; }
+        }
+
+        .click-effect-0 { animation: clickFlashLevel0 0.4s ease-out; }
+        .click-effect-1 { animation: clickFlashLevel1 0.4s ease-out; }
+        .click-effect-2 { animation: clickFlashLevel2 0.4s ease-out; }
+        .click-effect-3 { animation: clickFlashLevel3 0.4s ease-out; }
+
+        /* 称号升级特效（独立） */
+        @keyframes levelUpPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.8); transform: scale(1); border-color: #ffcc00; }
+            50% { box-shadow: 0 0 30px 20px rgba(255, 215, 0, 0.6); transform: scale(1.1); border-color: #ffcc00; }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); border-color: inherit; }
+        }
+        .level-up-effect {
+            animation: levelUpPulse 0.6s ease-in-out;
+        }
+
+        /* 其他原有样式不变 */
         .status-box { margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; }
         .status-label { color: #555; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
         .status-value { color: #fff; font-size: 1.2rem; }
 
         .relic-section { margin-top: 30px; padding-top: 25px; border-top: 1px solid #222; }
         .relic-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 15px 0; max-height: 150px; overflow-y: auto; padding: 5px; }
-        .relic-item { background: rgba(255, 255, 255, 0.03); border: 1px solid #333; color: #ffcc00; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; }
+        .relic-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid #333;
+            color: #ffcc00;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        /* 领取圣物按钮样式 */
         .claim-btn { background: transparent; padding: 8px 20px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s; margin-bottom: 15px; }
         .claim-btn:disabled { border: 1px solid #333; color: #555; cursor: not-allowed; }
         .claim-btn.active { border: 1px solid #ffcc00; color: #ffcc00; box-shadow: 0 0 15px rgba(255, 204, 0, 0.3); animation: pulseBtn 2s infinite; }
         @keyframes pulseBtn { 0%, 100% { box-shadow: 0 0 15px rgba(255,204,0,0.3); } 50% { box-shadow: 0 0 25px rgba(255,204,0,0.6); } }
 
         #feedbackMsg { height: 20px; color: #00ffcc; font-size: 0.8rem; margin-bottom: 10px; transition: opacity 0.3s; opacity: 0; }
+        .karma-accelerator-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid #ffcc00;
+            color: #ffcc00;
+            text-decoration: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            margin: 15px 0 10px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+        }
+        .karma-accelerator-btn:hover {
+            background: #ffcc00;
+            color: #000;
+            box-shadow: 0 0 25px rgba(255, 204, 0, 0.6);
+            transform: translateY(-1px);
+        }
         #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .auth-input { background: transparent; border: none; border-bottom: 1px solid #fff; color: #fff; font-size: 1.2rem; text-align: center; outline: none; padding: 10px; width: 300px; margin-bottom: 30px; }
         .auth-btn { background: transparent; border: 1px solid #fff; color: #fff; padding: 10px 40px; cursor: pointer; letter-spacing: 5px; }
@@ -65,11 +218,14 @@
             </div>
 
             <button id="meritBtn" class="merit-btn">注入善念</button>
+
+            <br>
+            <a href="https://www.checkout-ds24.com/product/691617" target="_blank" class="karma-accelerator-btn">⚡ Karma Accelerator</a>
+
             <div id="feedbackMsg"></div>
 
             <div class="relic-section">
                 <button id="claimRelicBtn" class="claim-btn" disabled>等待有缘人...</button>
-
                 <div class="status-label">已解锁圣物 (<span id="relicCountDisplay">0</span>)</div>
                 <div id="relicList" class="relic-list"></div>
             </div>
@@ -94,11 +250,12 @@
         // ==========================================
         // 【核心配置区】
         const CONFIG = {
-            TEST_MODE: true // 设为 true 显示下方的模拟按钮，设为 false 隐藏
+            TEST_MODE: true // 设为 true 显示模拟按钮，false 隐藏
         };
         // ==========================================
 
         let currentUserEmail = localStorage.getItem('cyberKarmaEmail');
+        let currentLevel = null;   // 记录称号用于升级特效
 
         window.onload = () => {
             if (CONFIG.TEST_MODE) document.getElementById('debugPanel').style.display = 'block';
@@ -145,17 +302,39 @@
             if (res.ok) renderData(await res.json()); else logout();
         }
 
-        // --- 注入善念 (限制每日点击) ---
+        // 添加点击特效（根据当前称号）
+        function playClickEffect(levelIndex) {
+            const btn = document.getElementById('meritBtn');
+            if (!btn) return;
+            const effectClass = `click-effect-${levelIndex}`;
+            btn.classList.add(effectClass);
+            // 强制浏览器重绘，确保动画触发
+            void btn.offsetHeight;
+            btn.addEventListener('animationend', () => {
+                btn.classList.remove(effectClass);
+            }, { once: true });
+        }
+
+        // --- 注入善念 ---
         document.getElementById('meritBtn').onclick = async () => {
+            // 获取当前称号索引（基于显示的文本）
+            // 使用全局变量 currentLevel 更可靠（已在 renderData 中更新）
+            let levelIndex = getLevelClass(currentLevel || '初见虚空');
+            playClickEffect(levelIndex);
+
             const res = await fetch('/api/merit/add', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentUserEmail,
+                    test_mode: CONFIG.TEST_MODE
+                })
             });
             const result = await res.json();
             showFeedback(result.message || result.error, res.ok ? "#00ffcc" : "#ffcc00");
             if (result.data) renderData(result.data);
         };
 
-        // --- 领取圣物 (判断 pending_invites) ---
+        // --- 领取圣物 ---
         document.getElementById('claimRelicBtn').onclick = async () => {
             const res = await fetch('/api/merit/claim_relic', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
@@ -167,7 +346,7 @@
             }
         };
 
-        // --- 调试：模拟增加机缘 ---
+        // --- 调试模拟邀请 ---
         async function triggerDebugInvite() {
             const res = await fetch('/api/merit/debug_invite', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: currentUserEmail })
@@ -175,8 +354,47 @@
             if (res.ok) renderData((await res.json()).data);
         }
 
-        // --- 渲染界面 ---
+        // 称号升级特效（仅在升级时触发）
+        function triggerLevelUpEffect() {
+            const btn = document.getElementById('meritBtn');
+            if (!btn) return;
+            btn.classList.add('level-up-effect');
+            btn.addEventListener('animationend', () => {
+                btn.classList.remove('level-up-effect');
+            }, { once: true });
+        }
+
+        // 根据称号字符串返回样式类等级
+        function getLevelClass(levelName) {
+            if (levelName === '明心见性') return 1;
+            if (levelName === '赛博菩提') return 2;
+            if (levelName === '万象圆满') return 3;
+            return 0;
+        }
+
+        // 更新按钮常驻样式
+        function updateButtonStyle(levelName) {
+            const btn = document.getElementById('meritBtn');
+            if (!btn) return;
+            const levelIndex = getLevelClass(levelName);
+            // 移除旧等级类
+            for (let i = 0; i <= 3; i++) {
+                btn.classList.remove(`level-${i}`);
+            }
+            btn.classList.add(`level-${levelIndex}`);
+        }
+
+        // 渲染界面（并检测升级、更新按钮样式）
         function renderData(data) {
+            const newLevel = data.level;
+            // 称号升级特效（仅当 level 变化且不是初始加载）
+            if (currentLevel !== null && currentLevel !== newLevel) {
+                triggerLevelUpEffect();
+            }
+            currentLevel = newLevel;
+            // 更新按钮常驻样式
+            updateButtonStyle(newLevel);
+
             document.getElementById('userEmailDisplay').innerText = `已绑定: ${currentUserEmail}`;
             document.getElementById('meritDisplay').innerText = data.total;
             document.getElementById('levelDisplay').innerText = data.level;
@@ -184,16 +402,18 @@
             document.getElementById('relicCountDisplay').innerText = data.relics.length;
             document.getElementById('inviteLinkDisplay').innerText = `${window.location.origin}/merit?ref=${data.invite_code}`;
 
-            // 功德按钮防刷判定
+            // 功德按钮每日限制
             const today = new Date().toISOString().split('T')[0];
             const meritBtn = document.getElementById('meritBtn');
             if (!CONFIG.TEST_MODE && data.last_date === today) {
-                meritBtn.disabled = true; meritBtn.innerText = "今日圆满";
+                meritBtn.disabled = true;
+                meritBtn.innerText = "今日圆满";
             } else {
-                meritBtn.disabled = false; meritBtn.innerText = "注入善念";
+                meritBtn.disabled = false;
+                meritBtn.innerText = "注入善念";
             }
 
-            // 领取圣物按钮高亮判定
+            // 领取圣物按钮
             const claimBtn = document.getElementById('claimRelicBtn');
             if (data.pending_invites > 0) {
                 claimBtn.disabled = false;
@@ -208,9 +428,39 @@
             // 圣物列表
             const list = document.getElementById('relicList');
             list.innerHTML = data.relics.length === 0 ? '<span style="color:#444; font-size:0.7rem;">暂无圣物</span>' : '';
+
+            // 圣物名称 → 图片文件名映射（请根据实际图片路径和扩展名调整）
+            const relicImages = {
+                '赛博护身符': 'relic_1.png',
+                '数字虚空圣像': 'relic_2.png',
+                '量子转经筒': 'relic_3.png',
+                '神经元经文集': 'relic_4.png',
+                '硅基莲花座': 'relic_5.png',
+                '慧忍核心·浮空圣殿': 'relic_6.png'
+            };
+            // Flask 静态文件基础路径（若图片放在 static/images/relics/）
+            const imageBasePath = "{{ url_for('static', filename='images/relics/') }}";
+
             data.relics.forEach(name => {
                 const div = document.createElement('div');
-                div.className = 'relic-item'; div.innerText = name;
+                div.className = 'relic-item';
+
+                if (relicImages[name]) {
+                    // 有对应图片：创建图片元素 + 文字
+                    const img = document.createElement('img');
+                    img.src = imageBasePath + relicImages[name];
+                    img.alt = name;
+                    img.style.width = '40px';
+                    img.style.height = '40px';
+                    img.style.objectFit = 'contain';
+                    const span = document.createElement('span');
+                    span.innerText = name;
+                    div.appendChild(img);
+                    div.appendChild(span);
+                } else {
+                    // 没有图片（如超出固定列表的“无相圣物”等）仅显示文字
+                    div.innerText = name;
+                }
                 list.appendChild(div);
             });
             list.scrollTop = list.scrollHeight;
@@ -218,7 +468,9 @@
 
         function showFeedback(text, color = "#00ffcc") {
             const fb = document.getElementById('feedbackMsg');
-            fb.innerText = text; fb.style.color = color; fb.style.opacity = "1";
+            fb.innerText = text;
+            fb.style.color = color;
+            fb.style.opacity = "1";
             setTimeout(() => { fb.style.opacity = "0"; }, 2000);
         }
 

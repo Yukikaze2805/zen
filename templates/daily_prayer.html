@@ -191,6 +191,7 @@
             <a href="/meditation" class="nav-link">靜心儀式</a>
             <a href="/profile" class="nav-link">用戶中心</a>
             <a href="/shrine" class="nav-link">返回神宮</a>
+            <a href="/" class="nav-link">返回虛空</a>  <!-- 新增返回虚空按钮 -->
         </div>
     </div>
 
@@ -226,10 +227,10 @@
                 setTimeout(() => {
                     lotusAnim.style.display = 'none';
                     lotusAnim.classList.remove('active');
-                    
+
                     resultDiv.innerText = data.content;
                     resultDiv.classList.add('show');
-                    
+
                     btn.innerText = '今日祈願已完成';
                 }, 4000);
 

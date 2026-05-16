@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>虛擬祭壇 | Virtual Altar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        .altar-container {
+            max-width: 1200px;
+            width: 90%;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h2 {
+            letter-spacing: 15px;
+            font-size: 2rem;
+            animation: shrineTitleBreath 4s ease-in-out infinite;
+        }
+
+        @keyframes shrineTitleBreath {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(255,255,255,0.5),
+                             0 0 20px rgba(255,255,255,0.3);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(255,255,255,0.9),
+                             0 0 40px rgba(255,255,255,0.5),
+                             0 0 60px rgba(255,255,255,0.3);
+            }
+        }
+
+        .subtitle {
+            color: #666;
+            margin-top: 10px;
+            animation: subtitleBreath 3s ease-in-out infinite;
+        }
+
+        @keyframes subtitleBreath {
+            0%, 100% {
+                opacity: 0.5;
+                text-shadow: 0 0 5px rgba(102,102,102,0.3);
+            }
+            50% {
+                opacity: 0.8;
+                text-shadow: 0 0 15px rgba(102,102,102,0.6);
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 50px 0;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid #FFFFFF;
+            color: #FFFFFF;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            letter-spacing: 5px;
+            transition: all 0.3s ease;
+            animation: buttonBreath 3s ease-in-out infinite;
+        }
+
+        @keyframes buttonBreath {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(255,255,255,0.2);
+            }
+            50% {
+                box-shadow: 0 0 15px rgba(255,255,255,0.5),
+                            0 0 25px rgba(255,255,255,0.3);
+            }
+        }
+
+        .action-btn:hover {
+            background: #FFFFFF;
+            color: #000000;
+            transform: scale(1.05);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .altar-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 60px;
+        }
+
+        .altar-section {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid #333;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            letter-spacing: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #AAAAAA;
+        }
+
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .lamp-item, .incense-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lamp-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: lampFlicker 2s ease-in-out infinite;
+        }
+
+        @keyframes lampFlicker {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px rgba(255,200,0,0.8));
+                opacity: 1;
+            }
+            50% {
+                filter: drop-shadow(0 0 20px rgba(255,200,0,1));
+                opacity: 0.9;
+            }
+        }
+
+        .incense-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .incense-icon::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to top, transparent, rgba(255,255,255,0.6));
+            animation: smokeRise 3s ease-in-out infinite;
+        }
+
+        @keyframes smokeRise {
+            0%, 100% {
+                opacity: 0.3;
+                height: 20px;
+            }
+            50% {
+                opacity: 0.7;
+                height: 30px;
+            }
+        }
+
+        .countdown {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .empty-message {
+            color: #555;
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .duration-selector {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20,20,20,0.98);
+            border: 1px solid #666;
+            padding: 40px;
+            border-radius: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .duration-selector.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .duration-option {
+            background: transparent;
+            border: 1px solid #666;
+            color: #AAAAAA;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .duration-option:hover {
+            border-color: #FFFFFF;
+            color: #FFFFFF;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .back-link {
+            margin-top: 60px;
+            display: block;
+            color: #444;
+            text-decoration: none;
+            animation: linkBreath 3s ease-in-out infinite;
+        }
+
+        @keyframes linkBreath {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.7;
+                text-shadow: 0 0 10px rgba(68,68,68,0.5);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .altar-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="altar-container">
+        <h2>虛擬祭壇</h2>
+        <p class="subtitle">VIRTUAL ALTAR OF DEVOTION</p>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="showDurationSelector('lamp')">🕯️ 供 燈</button>
+            <button class="action-btn" onclick="showDurationSelector('incense')">🪔 上 香</button>
+        </div>
+
+        <div class="altar-display">
+            <div class="altar-section">
+                <div class="section-title">已點亮的燈</div>
+                <div id="lampsContainer" class="items-grid">
+                    {% if lamps %}
+                        {% for lamp in lamps %}
+                        <div class="lamp-item" data-end-time="{{ lamp.end_timestamp }}">
+                            <div class="lamp-icon">🕯️</div>
+                            <div class="countdown">{{ lamp.duration_minutes }}分鐘</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-message">暫無點亮的燈</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="altar-section">
+                <div class="section-title">正在燃燒的香</div>
+                <div id="incensesContainer" class="items-grid">
+                    {% if incenses %}
+                        {% for incense in incenses %}
+                        <div class="incense-item" data-end-time="{{ incense.end_timestamp }}">
+                            <div class="incense-icon">🪔</div>
+                            <div class="countdown">{{ incense.duration_minutes }}分鐘</div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-message">暫無燃燒的香</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <a href="/" class="back-link">← 返回虛空 / RETURN TO VOID</a>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="hideDurationSelector()"></div>
+    
+    <div class="duration-selector" id="durationSelector">
+        <button class="close-btn" onclick="hideDurationSelector()">×</button>
+        <h3 style="text-align: center; letter-spacing: 5px; margin-bottom: 20px;" id="selectorTitle">選擇時長</h3>
+        <div class="duration-options" id="durationOptions"></div>
+    </div>
+
+    <script>
+        function showDurationSelector(action) {
+            const selector = document.getElementById('durationSelector');
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('selectorTitle');
+            const options = document.getElementById('durationOptions');
+
+            if (action === 'lamp') {
+                title.textContent = '選擇供燈時長';
+                options.innerHTML = `
+                    <button class="duration-option" onclick="performAction('lamp', 15)">15分鐘</button>
+                    <button class="duration-option" onclick="performAction('lamp', 30)">30分鐘</button>
+                    <button class="duration-option" onclick="performAction('lamp', 60)">60分鐘</button>
+                    <button class="duration-option" onclick="performAction('lamp', 120)">2小時</button>
+                    <button class="duration-option" onclick="performAction('lamp', 240)">4小時</button>
+                `;
+            } else if (action === 'incense') {
+                title.textContent = '選擇燃香時長';
+                options.innerHTML = `
+                    <button class="duration-option" onclick="performAction('incense', 15)">15分鐘</button>
+                    <button class="duration-option" onclick="performAction('incense', 30)">30分鐘</button>
+                    <button class="duration-option" onclick="performAction('incense', 60)">60分鐘</button>
+                `;
+            }
+
+            selector.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function hideDurationSelector() {
+            document.getElementById('durationSelector').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        async function performAction(action, duration) {
+            hideDurationSelector();
+            
+            const endpoint = action === 'lamp' ? '/api/altar/light-lamp' : '/api/altar/burn-incense';
+            
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ duration: duration })
+                });
+
+                const result = await res.json();
+                
+                if (res.ok) {
+                    alert(result.message || '操作成功');
+                    refreshAltar();
+                } else {
+                    alert(result.error || '操作失敗');
+                }
+            } catch (error) {
+                console.error('錯誤:', error);
+                alert('網路異常，請稍後再試');
+            }
+        }
+
+        async function refreshAltar() {
+            try {
+                const res = await fetch('/api/altar/status');
+                const data = await res.json();
+                
+                updateDisplay('lampsContainer', data.lamps, 'lamp');
+                updateDisplay('incensesContainer', data.incenses, 'incense');
+            } catch (error) {
+                console.error('刷新錯誤:', error);
+            }
+        }
+
+        function updateDisplay(containerId, items, type) {
+            const container = document.getElementById(containerId);
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-message">暫無' + (type === 'lamp' ? '點亮的燈' : '燃燒的香') + '</div>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                const endTime = item.end_timestamp;
+                const icon = type === 'lamp' ? '🕯️' : '🪔';
+                const itemClass = type === 'lamp' ? 'lamp-item' : 'incense-item';
+                const iconClass = type === 'lamp' ? 'lamp-icon' : 'incense-icon';
+                return `
+                    <div class="${itemClass}" data-end-time="${endTime}">
+                        <div class="${iconClass}">${icon}</div>
+                        <div class="countdown" data-end-time="${endTime}">計算中...</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateCountdowns() {
+            const countdownElements = document.querySelectorAll('.countdown[data-end-time]');
+            const now = Date.now();
+
+            countdownElements.forEach(el => {
+                const endTime = parseInt(el.getAttribute('data-end-time'));
+                const remaining = endTime - now;
+
+                if (remaining <= 0) {
+                    el.textContent = '即將熄滅';
+                    el.parentElement.style.opacity = '0.5';
+                } else {
+                    const minutes = Math.floor(remaining / 60000);
+                    const seconds = Math.floor((remaining % 60000) / 1000);
+                    el.textContent = `${minutes}分${seconds.toString().padStart(2, '0')}秒`;
+                }
+            });
+        }
+
+        // 每秒更新倒计时
+        setInterval(updateCountdowns, 1000);
+
+        // 每30秒刷新一次祭坛状态
+        setInterval(refreshAltar, 30000);
+
+        // 初始加载时更新倒计时
+        updateCountdowns();
+    </script>
+</body>
+</html>

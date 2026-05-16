@@ -50,3 +50,24 @@ body {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* 仅为打赏按钮添加的局部样式 */
+.donation-wrap {
+    margin-top: 30px;
+    opacity: 0;
+    transition: opacity 2s ease; /* 缓慢浮现 */
+}
+.donation-btn {
+    display: inline-block;
+    color: #d4af37;
+    text-decoration: none;
+    font-size: 0.85rem;
+    border: 1px solid #d4af37;
+    padding: 8px 25px;
+    letter-spacing: 2px;
+    transition: 0.3s;
+}
+.donation-btn:hover {
+    background: #d4af37;
+    color: #000;
+}
